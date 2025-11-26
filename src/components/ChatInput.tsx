@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Square, ClipboardCheck, GitBranch, Loader2, ChevronDown, Paperclip, ArrowUp } from 'lucide-react';
+import { Send, Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp } from 'lucide-react';
 import type { AIModel } from '../types';
 
 interface ChatInputProps {
@@ -13,25 +13,7 @@ interface ChatInputProps {
   onGenerateFlowchart: () => void;
   canGenerateQuiz: boolean;
   canGenerateFlowchart: boolean;
-  currentModel?: AIModel;
-  onModelChange?: (model: AIModel) => void;
 }
-
-const modelDisplayNames: Record<AIModel, string> = {
-  'gemini-2.5-pro': 'Gemini 2.5 Pro',
-  'gemini-2.5-flash': 'Gemini 2.5 Flash',
-  'gemma-3-27b-it': 'Gemma 3',
-  'mistral-large-latest': 'Mistral Large',
-  'mistral-medium-latest': 'Mistral Medium',
-  'mistral-small-latest': 'Mistral Small',
-  'codestral-latest': 'Codestral',
-  'glm-4.5-flash': 'GLM 4.5',
-  'llama-3.3-70b-versatile': 'Llama 3.3',
-  'openai/gpt-oss-20b': 'GPT OSS 20B',
-  'gpt-oss-120b': 'GPT OSS 120B',
-  'qwen-3-235b-a22b-instruct-2507': 'Qwen 3',
-  'zai-glm-4.6': 'ZAI GLM 4.6',
-};
 
 export function ChatInput({
   onSendMessage,
@@ -44,14 +26,10 @@ export function ChatInput({
   onGenerateFlowchart,
   canGenerateQuiz,
   canGenerateFlowchart,
-  currentModel,
-  onModelChange
 }: ChatInputProps) {
   const [input, setInput] = useState('');
-  const [showModelDropdown, setShowModelDropdown] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const modelDropdownRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -82,19 +60,6 @@ export function ChatInput({
   useEffect(() => {
     resizeTextarea();
   }, [input, resizeTextarea]);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target as Node)) {
-        setShowModelDropdown(false);
-      }
-    };
-
-    if (showModelDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
-    }
-  }, [showModelDropdown]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -130,7 +95,7 @@ export function ChatInput({
         </div>
       )}
 
-      {/* Input form - Claude style */}
+      {/* Input form */}
       <form
         onSubmit={handleSubmit}
         className="relative flex items-end gap-2 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
@@ -169,84 +134,45 @@ export function ChatInput({
           />
         </div>
 
-        {/* Right actions */}
-        <div className="flex items-center gap-1 pb-1 flex-shrink-0">
-          {/* Model Selector */}
-          {currentModel && onModelChange && (
-            <div className="relative hidden sm:block" ref={modelDropdownRef}>
-              <button
-                type="button"
-                onClick={() => setShowModelDropdown(!showModelDropdown)}
-                className="flex items-center gap-1 px-2 py-1.5 text-[10px] font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
-                title={modelDisplayNames[currentModel]}
-              >
-                <span className="max-w-[100px] truncate">{modelDisplayNames[currentModel].split(' ').slice(0, 2).join(' ')}</span>
-                <ChevronDown className="w-3 h-3 flex-shrink-0" />
-              </button>
-
-              {showModelDropdown && (
-                <div className="absolute bottom-full right-0 mb-2 bg-[#1e1e1e] border border-[var(--color-border)] rounded-xl shadow-xl py-1 max-h-64 overflow-y-auto z-50 min-w-[180px]">
-                  {(Object.keys(modelDisplayNames) as AIModel[]).map((model) => (
-                    <button
-                      key={model}
-                      type="button"
-                      onClick={() => {
-                        onModelChange(model);
-                        setShowModelDropdown(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 text-xs transition-colors ${model === currentModel
-                        ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]'
-                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
-                        }`}
-                    >
-                      {modelDisplayNames[model]}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Action buttons - Hidden on mobile, shown on desktop when space available */}
-          <div className="hidden lg:flex items-center gap-1">
-            <button
-              type="button"
-              onClick={onGenerateQuiz}
-              disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-              className={`p-1.5 rounded-lg transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
-              title="Generate Quiz"
-            >
-              {isQuizLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
-            </button>
-
-            <button
-              type="button"
-              onClick={onGenerateFlowchart}
-              disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-              className={`p-1.5 rounded-lg transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
-              title="Generate Flowchart"
-            >
-              {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
-            </button>
-          </div>
-
-          {/* Send button */}
+        {/* Right actions - Desktop only */}
+        <div className="hidden lg:flex items-center gap-1 pb-1 flex-shrink-0">
           <button
-            type="submit"
-            disabled={!canSend || isLoading}
-            className={`p-2 rounded-lg transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
-              ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-placeholder)] cursor-not-allowed'
-              : 'bg-[var(--color-accent)] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
-              }`}
-            title="Send message (Shift+Enter for new line)"
+            type="button"
+            onClick={onGenerateQuiz}
+            disabled={!canGenerateQuiz || isQuizLoading || isLoading}
+            className={`p-1.5 rounded-lg transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            title="Generate Quiz"
           >
-            <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
+            {isQuizLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={onGenerateFlowchart}
+            disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
+            className={`p-1.5 rounded-lg transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            title="Generate Flowchart"
+          >
+            {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
           </button>
         </div>
+
+        {/* Send button - Mobile visible, always on right */}
+        <button
+          type="submit"
+          disabled={!canSend || isLoading}
+          className={`p-2 rounded-lg transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
+            ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-placeholder)] cursor-not-allowed'
+            : 'bg-[#D4704F] hover:bg-[#E08050] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
+            }`}
+          title="Send message (Shift+Enter for new line)"
+        >
+          <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
+        </button>
       </form>
 
       {/* Footer hint */}
-      <p className="text-center text-[9px] text-[var(--color-text-placeholder)] py-2 mt-2">
+      <p className="text-center text-[9px] text-[var(--color-text-placeholder)] py-2 mt-2 hidden lg:block">
         Shift + Enter for new line
       </p>
     </div>
