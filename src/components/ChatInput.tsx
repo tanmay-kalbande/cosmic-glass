@@ -141,7 +141,7 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left Actions */}
         <div className="flex items-center gap-1 pb-1 pl-1">
@@ -151,7 +151,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
             >
               <Plus className="w-5 h-5" />
             </button>
@@ -194,7 +194,7 @@ export function ChatInput({
             <button
               type="button"
               onClick={handlePlusClick}
-              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
               title="Attach file"
             >
               <Paperclip className="w-5 h-5" />
@@ -202,7 +202,7 @@ export function ChatInput({
 
             <button
               type="button"
-              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
               title="Settings"
             >
               <Settings className="w-5 h-5" />
@@ -210,7 +210,7 @@ export function ChatInput({
 
             <button
               type="button"
-              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
               title="Timer"
             >
               <Clock className="w-5 h-5" />
@@ -220,7 +220,7 @@ export function ChatInput({
               type="button"
               onClick={onGenerateQuiz}
               disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-              className={`p-2 rounded-full transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+              className={`p-2 rounded-lg transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
               title="Generate Quiz"
             >
               {isQuizLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ClipboardCheck className="w-5 h-5" />}
@@ -230,7 +230,7 @@ export function ChatInput({
               type="button"
               onClick={onGenerateFlowchart}
               disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-              className={`p-2 rounded-full transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+              className={`p-2 rounded-lg transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
               title="Generate Flowchart"
             >
               {isFlowchartLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitBranch className="w-5 h-5" />}
