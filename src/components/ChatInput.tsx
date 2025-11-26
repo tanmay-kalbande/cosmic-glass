@@ -141,7 +141,7 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-2 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left Actions */}
         <div className="flex items-center gap-1 pb-1 pl-1">
