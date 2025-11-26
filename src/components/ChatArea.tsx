@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
-import { Conversation, Message } from '../types';
+import { Conversation, Message, AIModel } from '../types';
 
 interface ChatAreaProps {
   conversation: Conversation | undefined;
@@ -20,6 +20,8 @@ interface ChatAreaProps {
   onGenerateFlowchart: () => void;
   onEditMessage?: (messageId: string, newContent: string) => void;
   onRegenerateResponse?: (messageId: string) => void;
+  currentModel?: AIModel;
+  onModelChange?: (model: AIModel) => void;
 }
 
 export function ChatArea({
@@ -37,6 +39,8 @@ export function ChatArea({
   onGenerateFlowchart,
   onEditMessage,
   onRegenerateResponse,
+  currentModel,
+  onModelChange,
 }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
@@ -211,6 +215,8 @@ export function ChatArea({
           onGenerateFlowchart={onGenerateFlowchart}
           canGenerateQuiz={!!canGenerateQuiz}
           canGenerateFlowchart={!!canGenerateFlowchart}
+          currentModel={currentModel}
+          onModelChange={onModelChange}
         />
       </div>
     </div>
