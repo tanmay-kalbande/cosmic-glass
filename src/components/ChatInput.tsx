@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PlusCircle, Square, ClipboardCheck, GitBranch, Loader2, ChevronDown, Settings, Clock, Paperclip, ArrowUp } from 'lucide-react';
+import { Send, PlusCircle, Square, ClipboardCheck, GitBranch, Loader2, ChevronDown, Settings, Clock, Paperclip, ArrowUp, Plus } from 'lucide-react';
 import type { AIModel } from '../types';
 
 interface ChatInputProps {
@@ -50,9 +50,11 @@ export function ChatInput({
 }: ChatInputProps) {
   const [input, setInput] = useState('');
   const [showModelDropdown, setShowModelDropdown] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const modelDropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -84,19 +86,22 @@ export function ChatInput({
     resizeTextarea();
   }, [input, resizeTextarea]);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (modelDropdownRef.current && !modelDropdownRef.current.contains(event.target as Node)) {
         setShowModelDropdown(false);
       }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setShowMobileMenu(false);
+      }
     };
 
-    if (showModelDropdown) {
+    if (showModelDropdown || showMobileMenu) {
       document.addEventListener('mousedown', handleClickOutside);
       return () => document.removeEventListener('mousedown', handleClickOutside);
     }
-  }, [showModelDropdown]);
+  }, [showModelDropdown, showMobileMenu]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -109,6 +114,7 @@ export function ChatInput({
     };
     reader.readAsText(file);
     event.target.value = ''; // Reset file input
+    setShowMobileMenu(false);
   };
 
   const handlePlusClick = () => {
@@ -135,55 +141,101 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl lg:rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left Actions */}
         <div className="flex items-center gap-1 pb-1 pl-1">
-          <button
-            type="button"
-            onClick={handlePlusClick}
-            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
-            title="Attach file"
-          >
-            <Paperclip className="w-5 h-5" />
-          </button>
 
-          <button
-            type="button"
-            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors hidden sm:block"
-            title="Settings"
-          >
-            <Settings className="w-5 h-5" />
-          </button>
+          {/* Mobile Menu Button (Visible only on mobile) */}
+          <div className="relative lg:hidden" ref={mobileMenuRef}>
+            <button
+              type="button"
+              onClick={() => setShowMobileMenu(!showMobileMenu)}
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+            >
+              <Plus className="w-5 h-5" />
+            </button>
 
-          <button
-            type="button"
-            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors hidden sm:block"
-            title="Timer"
-          >
-            <Clock className="w-5 h-5" />
-          </button>
+            {/* Mobile Dropdown Menu */}
+            {showMobileMenu && (
+              <div className="absolute bottom-full left-0 mb-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-xl p-2 min-w-[180px] z-50 flex flex-col gap-1">
+                <button
+                  type="button"
+                  onClick={handlePlusClick}
+                  className="flex items-center gap-3 px-3 py-2 text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors w-full text-left"
+                >
+                  <Paperclip className="w-4 h-4" />
+                  <span>Attach File</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { onGenerateQuiz(); setShowMobileMenu(false); }}
+                  disabled={!canGenerateQuiz || isQuizLoading || isLoading}
+                  className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left ${!canGenerateQuiz ? 'opacity-50 cursor-not-allowed text-[var(--color-text-placeholder)]' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'}`}
+                >
+                  {isQuizLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
+                  <span>Generate Quiz</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { onGenerateFlowchart(); setShowMobileMenu(false); }}
+                  disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
+                  className={`flex items-center gap-3 px-3 py-2 text-sm rounded-lg transition-colors w-full text-left ${!canGenerateFlowchart ? 'opacity-50 cursor-not-allowed text-[var(--color-text-placeholder)]' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)]'}`}
+                >
+                  {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
+                  <span>Generate Flowchart</span>
+                </button>
+              </div>
+            )}
+          </div>
 
-          {/* Quiz & Flowchart - Keep them accessible but compact */}
-          <button
-            type="button"
-            onClick={onGenerateQuiz}
-            disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-            className={`p-2 rounded-full transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
-            title="Generate Quiz"
-          >
-            {isQuizLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ClipboardCheck className="w-5 h-5" />}
-          </button>
+          {/* Desktop Actions (Hidden on mobile) */}
+          <div className="hidden lg:flex items-center gap-1">
+            <button
+              type="button"
+              onClick={handlePlusClick}
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              title="Attach file"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
 
-          <button
-            type="button"
-            onClick={onGenerateFlowchart}
-            disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-            className={`p-2 rounded-full transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
-            title="Generate Flowchart"
-          >
-            {isFlowchartLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitBranch className="w-5 h-5" />}
-          </button>
+            <button
+              type="button"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              title="Settings"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
+
+            <button
+              type="button"
+              className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+              title="Timer"
+            >
+              <Clock className="w-5 h-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={onGenerateQuiz}
+              disabled={!canGenerateQuiz || isQuizLoading || isLoading}
+              className={`p-2 rounded-full transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+              title="Generate Quiz"
+            >
+              {isQuizLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ClipboardCheck className="w-5 h-5" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={onGenerateFlowchart}
+              disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
+              className={`p-2 rounded-full transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+              title="Generate Flowchart"
+            >
+              {isFlowchartLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitBranch className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
 
         {/* Hidden file input */}
