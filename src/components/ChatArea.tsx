@@ -196,7 +196,7 @@ export function ChatArea({
         </button>
 
         <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors overflow-hidden">
-          <span className="font-serif text-lg font-medium text-[var(--color-text-primary)] truncate max-w-[200px]">
+          <span className="text-lg font-medium text-[var(--color-text-primary)] line-clamp-2 max-w-[200px] leading-tight text-center">
             {conversation?.title || 'New Chat'}
           </span>
           <ChevronDown size={14} className="text-[var(--color-text-secondary)] flex-shrink-0" />
@@ -211,7 +211,7 @@ export function ChatArea({
       >
 
 
-        <div className="chat-messages-container h-full flex-1">
+        <div className="chat-messages-container h-full flex-1 pt-4 pb-4">
           {allMessages.length === 0 ? (
             // State 2a: The selected conversation is empty.
             // State 2a: The selected conversation is empty.
@@ -358,11 +358,7 @@ export function ChatArea({
 
               {/* Branding Divider & Disclaimer */}
               <div className="pb-4 space-y-6">
-                <div className="flex items-center justify-center gap-4 opacity-50">
-                  <div className="h-px w-12 bg-gradient-to-r from-transparent to-[var(--color-border)]" />
-                  <Sparkles size={16} className="text-[var(--color-accent)] animate-pulse" />
-                  <div className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-border)]" />
-                </div>
+
 
               </div>
             </>
