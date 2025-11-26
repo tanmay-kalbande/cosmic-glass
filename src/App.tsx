@@ -824,24 +824,25 @@ function App() {
             )}
 
             <ChatArea
-              conversation={currentConversation}
-              onSendMessage={handleSendMessage}
-              onNewConversation={handleNewConversation}
-              isLoading={isChatLoading}
-              isQuizLoading={isQuizLoading}
-              isFlowchartLoading={isFlowchartLoading}
-              streamingMessage={streamingMessage}
-              hasApiKey={hasApiKey}
-              onStopGenerating={handleStopGenerating}
-              onSaveAsNote={handleSaveAsNote}
-              onGenerateQuiz={handleGenerateQuiz}
-              onGenerateFlowchart={handleGenerateFlowchart}
-              onEditMessage={handleEditMessage}
-              onRegenerateResponse={handleRegenerateResponse}
-              currentModel={settings.selectedModel}
-              onModelChange={handleModelChange}
-              onOpenSidebar={() => setSidebarOpen(true)}
-            />
+  conversation={currentConversation}
+  onSendMessage={handleSendMessage}
+  onNewConversation={handleNewConversation}
+  isLoading={isChatLoading}
+  isQuizLoading={isQuizLoading}
+  isFlowchartLoading={isFlowchartLoading}
+  streamingMessage={streamingMessage}
+  hasApiKey={hasApiKey}
+  onStopGenerating={handleStopGenerating}
+  onSaveAsNote={handleSaveAsNote}
+  onGenerateQuiz={handleGenerateQuiz}
+  onGenerateFlowchart={handleGenerateFlowchart}
+  onEditMessage={handleEditMessage}
+  onRegenerateResponse={handleRegenerateResponse}
+  currentModel={settings.selectedModel}
+  onModelChange={handleModelChange}
+  onOpenSidebar={() => setSidebarOpen(true)}
+  onSelectConversation={handleSelectConversation}
+/>
           </>
         ) : activeView === 'note' ? (
           <NoteView note={currentNote} />
