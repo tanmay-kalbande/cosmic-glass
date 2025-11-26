@@ -800,7 +800,7 @@ function App() {
         isSidebarOpen={sidebarOpen}
       />
       <div className="main-content">
-        {!sidebarOpen && (
+        {!sidebarOpen && activeView !== 'chat' && (
           <button
             onClick={() => setSidebarOpen(true)}
             className="fixed top-3 left-3 z-40 p-2 glass-panel rounded-full shadow-lg hover:bg-white/10 transition-all duration-300 lg:hidden btn-shine group"
@@ -840,6 +840,7 @@ function App() {
               onRegenerateResponse={handleRegenerateResponse}
               currentModel={settings.selectedModel}
               onModelChange={handleModelChange}
+              onOpenSidebar={() => setSidebarOpen(true)}
             />
           </>
         ) : activeView === 'note' ? (
