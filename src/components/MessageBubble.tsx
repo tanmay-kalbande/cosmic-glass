@@ -97,48 +97,39 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
   copied: boolean;
   noteSaved: boolean;
 }) => (
-  <div className="flex gap-0.5 p-0.5 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-sm">
+  <div className="flex items-center gap-1 mt-2 text-[var(--color-text-secondary)]">
     {!isUser && onRegenerate && (
       <button
         onClick={onRegenerate}
-        className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-1.5 rounded-md hover:bg-[var(--color-border)]"
+        className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
         title={'Regenerate response'}
       >
-        <RefreshCcw className="w-3.5 h-3.5" />
+        <RefreshCcw className="w-4 h-4" />
       </button>
     )}
+    <button
+      onClick={onCopy}
+      className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+      title={'Copy message'}
+    >
+      {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+    </button>
     {!isUser && (
       <button
         onClick={onSaveNote}
-        className={`transition-colors p-1.5 rounded-md hover:bg-[var(--color-border)] ${noteSaved ? 'text-blue-400' : 'text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+        className={`p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] transition-colors ${noteSaved ? 'text-blue-400' : 'hover:text-[var(--color-text-primary)]'}`}
         title={'Save as Note'}
       >
-        <Bookmark className="w-3.5 h-3.5" />
+        <Bookmark className="w-4 h-4" />
       </button>
     )}
     <button
       onClick={onEdit}
-      className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-1.5 rounded-md hover:bg-[var(--color-border)]"
+      className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
       title={'Edit message'}
     >
-      <Edit2 className="w-3.5 h-3.5" />
+      <Edit2 className="w-4 h-4" />
     </button>
-    <button
-      onClick={onCopy}
-      className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-1.5 rounded-md hover:bg-[var(--color-border)]"
-      title={'Copy message'}
-    >
-      {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-    </button>
-    {!isUser && (
-      <button
-        onClick={onExport}
-        className="text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors p-1.5 rounded-md hover:bg-[var(--color-border)]"
-        title={'Export as Markdown'}
-      >
-        <Download className="w-3.5 h-3.5" />
-      </button>
-    )}
   </div>
 ));
 
@@ -305,7 +296,7 @@ export function MessageBubble({
 
       {/* Message Content Container with relative positioning for action buttons */}
       <div className="flex-1 min-w-0 relative">
-        <div className={`${isUser ? 'inline-block bg-[#2a2a2a] px-4 py-2.5 rounded-xl max-w-[85%]' : ''}`}>
+        <div className={`${isUser ? 'inline-block bg-[#2a2a2a] px-5 py-3 rounded-3xl rounded-tr-sm max-w-[85%] ml-auto' : 'w-full'}`}>
           {!isUser && displayModel && (
             <div className="text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide">
               {displayModel}
@@ -345,9 +336,9 @@ export function MessageBubble({
             </div>
           ) : (
             <div className={`prose prose-invert max-w-none`} style={{
-              fontSize: '15px',
-              lineHeight: '1.7',
-              fontWeight: isUser ? '600' : '400',
+              fontSize: isUser ? '15px' : '16px',
+              lineHeight: isUser ? '1.6' : '1.8',
+              fontWeight: isUser ? '500' : '400',
               color: isUser ? '#ffffff' : 'inherit'
             }}>
               <ReactMarkdown
@@ -362,9 +353,9 @@ export function MessageBubble({
           )}
         </div>
 
-        {/* Action buttons - positioned at bottom right */}
-        {!isEditing && !isStreaming && message.content.length > 0 && onEditMessage && (
-          <div className="absolute bottom-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+        {/* Action buttons - positioned below message for assistant, or right for user */}
+        {!isEditing && !isStreaming && message.content.length > 0 && (
+          <div className={`${isUser ? 'absolute bottom-2 right-full mr-2 opacity-0 group-hover:opacity-100' : 'mt-1 opacity-0 group-hover:opacity-100'} transition-opacity duration-200`}>
             <ActionButtons
               isUser={isUser}
               onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
