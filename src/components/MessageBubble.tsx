@@ -298,7 +298,7 @@ export function MessageBubble({
 
       {/* User Icon - Small circle with letter */}
       {isUser && (
-        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-[#2a2a2a] text-[11px] font-medium text-white/80 mt-1">
+        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-[#2a2a2a] border border-white/5 text-[11px] font-medium text-white/80 mt-1">
           F
         </div>
       )}
