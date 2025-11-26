@@ -186,28 +186,30 @@ export function ChatArea({
   // State 2: A conversation is selected (either new and empty, or with messages).
   return (
     <div className="chat-area">
+      {/* Mobile Header - Claude Style */}
+      <div className="lg:hidden flex items-center justify-between px-4 py-2 bg-[#0e0e0e] border-b border-[var(--color-border)] w-full z-30">
+        <button
+          onClick={onOpenSidebar}
+          className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+        >
+          <Menu size={20} />
+        </button>
+
+        <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors overflow-hidden">
+          <span className="font-serif text-lg font-medium text-[var(--color-text-primary)] truncate max-w-[200px]">
+            {conversation?.title || 'New Chat'}
+          </span>
+          <ChevronDown size={14} className="text-[var(--color-text-secondary)] flex-shrink-0" />
+        </button>
+
+        <div className="w-9" /> {/* Spacer to balance the menu button */}
+      </div>
+
       <div
         ref={chatMessagesRef}
         className="chat-messages scroll-container relative flex flex-col"
       >
-        {/* Mobile Header - Claude Style */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2 bg-[#050505] border-b border-[var(--color-border)] w-full">
-          <button
-            onClick={onOpenSidebar}
-            className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-          >
-            <Menu size={20} />
-          </button>
 
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors overflow-hidden">
-            <span className="font-serif text-lg font-medium text-[var(--color-text-primary)] truncate max-w-[200px]">
-              {conversation?.title || 'New Chat'}
-            </span>
-            <ChevronDown size={14} className="text-[var(--color-text-secondary)] flex-shrink-0" />
-          </button>
-
-          <div className="w-9" /> {/* Spacer to balance the menu button */}
-        </div>
 
         <div className="chat-messages-container h-full flex-1">
           {allMessages.length === 0 ? (
