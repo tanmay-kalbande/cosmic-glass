@@ -211,7 +211,7 @@ export function ChatArea({
       >
 
 
-        <div className="chat-messages-container h-full flex-1 pt-4 pb-4 px-4">
+        <div className="chat-messages-container flex-1 pt-4 pb-4 px-4">
           {allMessages.length === 0 ? (
             // State 2a: The selected conversation is empty.
             // State 2a: The selected conversation is empty.
@@ -367,7 +367,7 @@ export function ChatArea({
         </div>
       </div>
 
-      <div className={`chat-input-container mobile-chat-area ${allMessages.length === 0 ? 'hidden lg:block' : ''}`}>
+      <div className={`chat-input-container mobile-chat-area relative z-40 ${allMessages.length === 0 ? 'hidden lg:block' : ''}`}>
         <ChatInput
           onSendMessage={onSendMessage}
           isLoading={isLoading}
