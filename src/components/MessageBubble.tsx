@@ -364,7 +364,7 @@ export function MessageBubble({
 
         {/* Action buttons - positioned at bottom right */}
         {!isEditing && !isStreaming && message.content.length > 0 && onEditMessage && (
-          <div className="absolute bottom-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute bottom-2 right-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
             <ActionButtons
               isUser={isUser}
               onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
