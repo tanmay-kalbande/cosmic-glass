@@ -192,13 +192,13 @@ export function ChatArea({
       >
         {/* Mobile Header - Claude Style */}
         <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[var(--color-bg)]/80 backdrop-blur-md border-b border-[var(--color-border)]">
-          <button 
+          <button
             onClick={onOpenSidebar}
             className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
           >
             <Menu size={20} />
           </button>
-          
+
           <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors">
             <span className="font-serif text-lg font-medium text-[var(--color-text-primary)]">
               {conversation?.title || 'New Chat'}
@@ -342,31 +342,33 @@ export function ChatArea({
             </div>
           ) : (
             // State 2b: The conversation has messages.
-            <div className="space-y-6 sm:space-y-8 py-4 sm:py-6">
-              {allMessages.map((message) => (
-                <MessageBubble
-                  key={message.id}
-                  message={message}
-                  isStreaming={streamingMessage?.id === message.id}
-                  onSaveAsNote={onSaveAsNote}
-                  onEditMessage={onEditMessage}
-                  onRegenerateResponse={onRegenerateResponse}
-                />
-              ))}
-            </div>
-            
-            {/* Branding Divider & Disclaimer */}
-            <div className="pb-4 space-y-6">
-              <div className="flex items-center justify-center gap-4 opacity-50">
-                <div className="h-px w-12 bg-gradient-to-r from-transparent to-[var(--color-border)]" />
-                <Sparkles size={16} className="text-[var(--color-accent)] animate-pulse" />
-                <div className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-border)]" />
+            <>
+              <div className="space-y-6 sm:space-y-8 py-4 sm:py-6">
+                {allMessages.map((message) => (
+                  <MessageBubble
+                    key={message.id}
+                    message={message}
+                    isStreaming={streamingMessage?.id === message.id}
+                    onSaveAsNote={onSaveAsNote}
+                    onEditMessage={onEditMessage}
+                    onRegenerateResponse={onRegenerateResponse}
+                  />
+                ))}
               </div>
-              
-              <p className="text-center text-xs text-[var(--color-text-placeholder)] font-medium">
-                Responses may contain mistakes. Please verify important information.
-              </p>
-            </div>
+
+              {/* Branding Divider & Disclaimer */}
+              <div className="pb-4 space-y-6">
+                <div className="flex items-center justify-center gap-4 opacity-50">
+                  <div className="h-px w-12 bg-gradient-to-r from-transparent to-[var(--color-border)]" />
+                  <Sparkles size={16} className="text-[var(--color-accent)] animate-pulse" />
+                  <div className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-border)]" />
+                </div>
+
+                <p className="text-center text-xs text-[var(--color-text-placeholder)] font-medium">
+                  Responses may contain mistakes. Please verify important information.
+                </p>
+              </div>
+            </>
           )}
           <div ref={messagesEndRef} className="h-1 flex-shrink-0" />
         </div>
