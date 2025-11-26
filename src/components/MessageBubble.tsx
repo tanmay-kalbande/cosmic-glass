@@ -278,7 +278,7 @@ export function MessageBubble({
 
   return (
     <div
-      className={`message-wrapper group flex gap-3 items-start transition-all duration-200 ease-out will-change-transform`}
+      className={`message-wrapper group flex gap-3 items-start transition-all duration-200 ease-out`}
     >
       {/* AI Icon - Small and subtle */}
       {!isUser && (
@@ -296,7 +296,7 @@ export function MessageBubble({
 
       {/* Message Content Container with relative positioning for action buttons */}
       <div className="flex-1 min-w-0 relative">
-        <div className={`${isUser ? 'inline-block bg-[#2a2a2a] px-5 py-3 rounded-3xl rounded-tr-sm max-w-[85%] ml-auto' : 'w-full'}`}>
+        <div className={`${isUser ? 'inline-block bg-[#2a2a2a] px-5 py-3 rounded-2xl max-w-[85%] ml-auto' : 'w-full'}`}>
           {!isUser && displayModel && (
             <div className="text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide">
               {displayModel}
