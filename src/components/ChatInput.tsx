@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, PlusCircle, Square, ClipboardCheck, GitBranch, Loader2, ChevronDown } from 'lucide-react';
+import { Send, PlusCircle, Square, ClipboardCheck, GitBranch, Loader2, ChevronDown, Settings, Clock, Paperclip, ArrowUp } from 'lucide-react';
 import type { AIModel } from '../types';
 
 interface ChatInputProps {
@@ -118,33 +118,73 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div className="chat-input">
+    <div className="chat-input px-4 pb-4 pt-2">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-2">
           <button
             onClick={onStopGenerating}
-            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg text-xs sm:text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-gray-600 transition-all touch-target"
+            className="flex items-center gap-2 px-3 sm:px-4 py-1.5 bg-[var(--color-card)] border border-[var(--color-border)] rounded-full text-xs sm:text-sm text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:border-gray-600 transition-all touch-target shadow-sm"
           >
-            <Square className="w-3 h-3" />
-            <span className="hidden sm:inline">
-              Stop generating
-            </span>
+            <Square className="w-3 h-3 fill-current" />
+            <span className="hidden sm:inline">Stop generating</span>
           </button>
         </div>
       )}
 
       {/* Input form */}
-      <form onSubmit={handleSubmit} className="chat-input-form rounded-2xl">
-        {/* File attach button */}
-        <button
-          type="button"
-          onClick={handlePlusClick}
-          className="interactive-button flex-shrink-0 p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors touch-target"
-          title={'Attach file content'}
-        >
-          <PlusCircle className="w-5 h-5" />
-        </button>
+      <form
+        onSubmit={handleSubmit}
+        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+      >
+        {/* Left Actions */}
+        <div className="flex items-center gap-1 pb-1 pl-1">
+          <button
+            type="button"
+            onClick={handlePlusClick}
+            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors"
+            title="Attach file"
+          >
+            <Paperclip className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors hidden sm:block"
+            title="Settings"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+
+          <button
+            type="button"
+            className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors hidden sm:block"
+            title="Timer"
+          >
+            <Clock className="w-5 h-5" />
+          </button>
+
+          {/* Quiz & Flowchart - Keep them accessible but compact */}
+          <button
+            type="button"
+            onClick={onGenerateQuiz}
+            disabled={!canGenerateQuiz || isQuizLoading || isLoading}
+            className={`p-2 rounded-full transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            title="Generate Quiz"
+          >
+            {isQuizLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ClipboardCheck className="w-5 h-5" />}
+          </button>
+
+          <button
+            type="button"
+            onClick={onGenerateFlowchart}
+            disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
+            className={`p-2 rounded-full transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            title="Generate Flowchart"
+          >
+            {isFlowchartLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitBranch className="w-5 h-5" />}
+          </button>
+        </div>
 
         {/* Hidden file input */}
         <input
@@ -156,75 +196,36 @@ export function ChatInput({
         />
 
         {/* Text area */}
-        <textarea
-          ref={textareaRef}
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder={
-            disabled
-              ? 'Configure API keys first...'
-              : 'Ask anything...'
-          }
-          disabled={disabled || isLoading}
-          className="chat-input-textarea"
-          rows={1}
-          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-        />
+        <div className="flex-1 min-w-0 py-2">
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Reply..."
+            disabled={disabled || isLoading}
+            className="w-full max-h-[120px] bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-base leading-relaxed"
+            rows={1}
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          />
+        </div>
 
-        {/* Action buttons */}
-        <div className="chat-input-buttons">
-          {/* Quiz button */}
-          <button
-            type="button"
-            onClick={onGenerateQuiz}
-            disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-            className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canGenerateQuiz || isQuizLoading || isLoading
-              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-              : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
-              }`}
-            title={'Generate Quiz'}
-          >
-            {isQuizLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <ClipboardCheck className="w-4 h-4" />
-            )}
-          </button>
-
-          {/* Flowchart button */}
-          <button
-            type="button"
-            onClick={onGenerateFlowchart}
-            disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-            className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canGenerateFlowchart || isFlowchartLoading || isLoading
-              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-              : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
-              }`}
-            title={'Generate Flowchart'}
-          >
-            {isFlowchartLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <GitBranch className="w-4 h-4" />
-            )}
-          </button>
-
-          {/* Model Selector - Claude style (Mobile Only) */}
+        {/* Right Actions */}
+        <div className="flex items-center gap-2 pb-1 pr-1">
+          {/* Model Selector */}
           {currentModel && onModelChange && (
-            <div className="relative mx-1 lg:hidden" ref={modelDropdownRef}>
+            <div className="relative" ref={modelDropdownRef}>
               <button
                 type="button"
                 onClick={() => setShowModelDropdown(!showModelDropdown)}
-                className="flex items-center gap-1 px-2 py-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)] rounded-md transition-colors"
-                title="Select Model"
+                className="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
               >
-                <span className="max-w-[100px] truncate">{modelDisplayNames[currentModel]}</span>
+                <span className="max-w-[80px] sm:max-w-[120px] truncate">{modelDisplayNames[currentModel]}</span>
                 <ChevronDown className="w-3 h-3 flex-shrink-0" />
               </button>
 
               {showModelDropdown && (
-                <div className="absolute bottom-full right-0 mb-1 bg-[var(--color-card)] border border-[var(--color-border)] rounded-lg shadow-lg py-1 max-h-64 overflow-y-auto z-50 min-w-[160px]">
+                <div className="absolute bottom-full right-0 mb-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-xl py-1 max-h-64 overflow-y-auto z-50 min-w-[200px]">
                   {(Object.keys(modelDisplayNames) as AIModel[]).map((model) => (
                     <button
                       key={model}
@@ -233,9 +234,9 @@ export function ChatInput({
                         onModelChange(model);
                         setShowModelDropdown(false);
                       }}
-                      className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${model === currentModel
-                        ? 'bg-[var(--color-border)] text-[var(--color-text-primary)]'
-                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-text-primary)]'
+                      className={`w-full text-left px-4 py-2 text-sm transition-colors ${model === currentModel
+                        ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-primary)]'
+                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)]'
                         }`}
                     >
                       {modelDisplayNames[model]}
@@ -250,13 +251,13 @@ export function ChatInput({
           <button
             type="submit"
             disabled={!canSend || isLoading}
-            className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canSend || isLoading
-              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-              : 'bg-[var(--color-accent-bg)] text-[var(--color-bg)] hover:bg-[var(--color-accent-bg-hover)]'
+            className={`p-2 rounded-full transition-all duration-200 ${!canSend || isLoading
+              ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-placeholder)] cursor-not-allowed'
+              : 'bg-[var(--color-accent)] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
               }`}
             title={'Send message'}
           >
-            <Send className="w-4 h-4" />
+            <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
           </button>
         </div>
       </form>
