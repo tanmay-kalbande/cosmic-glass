@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { Conversation, Message, AIModel } from '../types';
-import { Settings, Clock, Plus, ArrowUp, ChevronDown, User } from 'lucide-react';
+import { Settings, Clock, Plus, ArrowUp, ChevronDown } from 'lucide-react';
 
 interface ChatAreaProps {
   conversation: Conversation | undefined;
@@ -213,26 +213,9 @@ export function ChatArea({
               </div>
 
               {/* Mobile New Chat UI - Claude Style */}
-              <div className="lg:hidden flex flex-col h-full relative">
-                {/* 1. Top Bar */}
-                <div className="flex justify-between items-center p-4">
-                  <div className="w-8"></div> {/* Spacer for Menu button */}
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-white shadow-lg">
-                    <User size={16} />
-                  </div>
-                </div>
-
-                {/* 2. Plan Info */}
-                <div className="flex justify-center mt-2 mb-8">
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-[var(--color-card)] border border-[var(--color-border)] rounded-full text-xs shadow-sm">
-                    <span className="text-[var(--color-text-secondary)] font-medium">Free plan</span>
-                    <span className="w-1 h-1 rounded-full bg-[var(--color-text-secondary)]"></span>
-                    <span className="text-[var(--color-text-primary)] font-bold">Upgrade</span>
-                  </div>
-                </div>
-
-                {/* 3. Greeting & 4. Input Card */}
-                <div className="flex-1 flex flex-col items-center justify-center -mt-20 px-4">
+              <div className="lg:hidden flex flex-col h-full relative justify-center">
+                {/* Greeting & Input Card */}
+                <div className="flex flex-col items-center justify-center px-4 w-full">
                   {/* Decorative Logo */}
                   <div className="mb-6 text-4xl animate-pulse">✨</div>
 
