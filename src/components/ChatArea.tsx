@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { Conversation, Message, AIModel } from '../types';
-import { Menu, ChevronDown } from 'lucide-react';
+import { Menu } from 'lucide-react';
 
 interface ChatAreaProps {
   conversation: Conversation | undefined;
@@ -22,6 +22,7 @@ interface ChatAreaProps {
   currentModel?: AIModel;
   onModelChange?: (model: AIModel) => void;
   onOpenSidebar?: () => void;
+  onSelectConversation?: (id: string) => void;
 }
 
 export function ChatArea({
@@ -42,25 +43,20 @@ export function ChatArea({
   currentModel,
   onModelChange,
   onOpenSidebar,
+  onSelectConversation,
 }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
+  const [isMobileNewChatCreated, setIsMobileNewChatCreated] = useState(false);
 
-  const modelDisplayNames: Record<AIModel, string> = {
-    'gemini-2.5-pro': 'Gemini 2.5 Pro',
-    'gemini-2.5-flash': 'Gemini 2.5 Flash',
-    'gemma-3-27b-it': 'Gemma 3',
-    'mistral-large-latest': 'Mistral Large',
-    'mistral-medium-latest': 'Mistral Medium',
-    'mistral-small-latest': 'Mistral Small',
-    'codestral-latest': 'Codestral',
-    'glm-4.5-flash': 'GLM 4.5',
-    'llama-3.3-70b-versatile': 'Llama 3.3',
-    'openai/gpt-oss-20b': 'GPT OSS 20B',
-    'gpt-oss-120b': 'GPT OSS 120B',
-    'qwen-3-235b-a22b-instruct-2507': 'Qwen 3',
-    'zai-glm-4.6': 'ZAI GLM 4.6',
-  };
+  // Auto-create new chat on mobile on first load
+  useEffect(() => {
+    const isMobile = window.innerWidth < 1024;
+    if (isMobile && !conversation && !isMobileNewChatCreated) {
+      onNewConversation();
+      setIsMobileNewChatCreated(true);
+    }
+  }, []);
 
   const allMessages = useMemo(() =>
     streamingMessage ? [...(conversation?.messages || []), streamingMessage] : conversation?.messages || [],
@@ -79,19 +75,27 @@ export function ChatArea({
   const canGenerateQuiz = conversation && conversation.messages.length > 2;
   const canGenerateFlowchart = conversation && conversation.messages.length > 1;
 
-  // No conversation selected
+  // Get greeting message based on time of day
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Good Morning';
+    if (hour < 17) return 'Good Afternoon';
+    return 'Good Evening';
+  };
+
+  // Desktop: No conversation selected
   if (!conversation) {
     return (
-      <div className="chat-area flex flex-col items-center justify-center p-4 sm:p-8">
+      <div className="chat-area hidden lg:flex flex-col items-center justify-center p-8">
         <div className="text-center max-w-2xl mx-auto space-y-8">
           {/* Logo */}
           <div className="flex justify-center">
-            <div className="text-6xl sm:text-7xl">✨</div>
+            <div className="text-6xl">✨</div>
           </div>
 
           {/* Title */}
           <div className="space-y-2">
-            <h1 className="text-3xl sm:text-4xl font-bold text-[var(--color-text-primary)]">
+            <h1 className="text-4xl font-bold text-[var(--color-text-primary)]">
               AI Tutor
             </h1>
             <p className="text-sm text-[var(--color-text-secondary)]">
@@ -112,7 +116,7 @@ export function ChatArea({
     );
   }
 
-  // Conversation is selected
+  // Conversation is selected (Desktop or Mobile)
   return (
     <div className="chat-area flex flex-col h-full">
       {/* Mobile Header */}
@@ -138,43 +142,46 @@ export function ChatArea({
       >
         <div className="chat-messages-container flex-1 pt-4 pb-4 px-4">
           {allMessages.length === 0 ? (
-            // Empty state
+            // Empty state - match Foxtail design
             <div className="h-full flex flex-col items-center justify-center">
-              {/* Desktop Empty State */}
-              <div className="hidden lg:flex items-center justify-center h-full">
-                <div className="text-center p-4 max-w-md mx-auto">
-                  <div className="flex flex-col items-center gap-6">
-                    <div className="text-6xl">✨</div>
-                    <h2 className="text-3xl font-medium text-[var(--color-text-primary)]">
-                      {(() => {
-                        const hour = new Date().getHours();
-                        if (hour < 12) return 'Good Morning';
-                        if (hour < 17) return 'Good Afternoon';
-                        return 'Good Evening';
-                      })()}
-                    </h2>
-                    <p className="text-sm text-[var(--color-text-secondary)]">
-                      Ready to learn?
-                    </p>
-                  </div>
+              {/* Logo with spinning effect */}
+              <div className="flex justify-center mb-8">
+                <div className="text-5xl animate-spin" style={{ animationDuration: '3s' }}>
+                  ✨
                 </div>
               </div>
 
-              {/* Mobile Empty State */}
-              <div className="lg:hidden flex flex-col items-center justify-center w-full">
-                <div className="text-center">
-                  <div className="text-5xl mb-4">✨</div>
-                  <h2 className="text-2xl font-semibold text-[var(--color-text-primary)] mb-2">
-                    {(() => {
-                      const hour = new Date().getHours();
-                      if (hour < 12) return 'Good Morning';
-                      if (hour < 17) return 'Good Afternoon';
-                      return 'Good Evening';
-                    })()}
-                  </h2>
-                  <p className="text-xs text-[var(--color-text-secondary)]">
-                    Start by asking a question
-                  </p>
+              {/* Greeting message */}
+              <h2 className="text-3xl lg:text-4xl font-light text-[var(--color-text-primary)] text-center mb-8 tracking-wide">
+                {getGreeting()}, Friend
+              </h2>
+
+              {/* Input card for empty state (Mobile only) */}
+              <div className="lg:hidden w-full max-w-sm">
+                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl p-4 space-y-4">
+                  <div className="text-center text-sm text-[var(--color-text-secondary)]">
+                    How can I help you today?
+                  </div>
+                  
+                  {/* Quick action buttons */}
+                  <div className="flex justify-center gap-2">
+                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="New">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                      </svg>
+                    </button>
+                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="Settings">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </button>
+                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="History">
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 2m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -214,8 +221,6 @@ export function ChatArea({
           onGenerateFlowchart={onGenerateFlowchart}
           canGenerateQuiz={!!canGenerateQuiz}
           canGenerateFlowchart={!!canGenerateFlowchart}
-          currentModel={currentModel}
-          onModelChange={onModelChange}
         />
       </div>
     </div>
