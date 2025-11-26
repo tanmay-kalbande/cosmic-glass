@@ -191,7 +191,7 @@ export function ChatArea({
         className="chat-messages scroll-container relative flex flex-col"
       >
         {/* Mobile Header - Claude Style */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[var(--color-bg)]/80 backdrop-blur-md border-b border-[var(--color-border)]">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2 bg-[var(--color-bg)] border-b border-[var(--color-border)]">
           <button
             onClick={onOpenSidebar}
             className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
@@ -199,16 +199,14 @@ export function ChatArea({
             <Menu size={20} />
           </button>
 
-          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors">
-            <span className="font-serif text-lg font-medium text-[var(--color-text-primary)]">
+          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors overflow-hidden">
+            <span className="font-serif text-lg font-medium text-[var(--color-text-primary)] truncate max-w-[200px]">
               {conversation?.title || 'New Chat'}
             </span>
-            <ChevronDown size={14} className="text-[var(--color-text-secondary)]" />
+            <ChevronDown size={14} className="text-[var(--color-text-secondary)] flex-shrink-0" />
           </button>
 
-          <button className="p-2 -mr-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors rounded-full border border-[var(--color-border)]">
-            <Share size={16} />
-          </button>
+          <div className="w-9" /> {/* Spacer to balance the menu button */}
         </div>
 
         <div className="chat-messages-container h-full flex-1">
@@ -364,9 +362,6 @@ export function ChatArea({
                   <div className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-border)]" />
                 </div>
 
-                <p className="text-center text-xs text-[var(--color-text-placeholder)] font-medium">
-                  Responses may contain mistakes. Please verify important information.
-                </p>
               </div>
             </>
           )}
@@ -389,6 +384,9 @@ export function ChatArea({
           currentModel={currentModel}
           onModelChange={onModelChange}
         />
+        <p className="text-center text-[10px] text-[var(--color-text-placeholder)] py-2">
+          Responses may contain mistakes. Please verify important information.
+        </p>
       </div>
     </div>
   );
