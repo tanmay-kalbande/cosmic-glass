@@ -282,7 +282,7 @@ export function MessageBubble({
       {isUser ? (
         <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
           {/* Avatar Inside */}
-          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] mt-0.5 select-none">
+          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none">
             <Smile size={18} strokeWidth={2.5} />
           </div>
 
