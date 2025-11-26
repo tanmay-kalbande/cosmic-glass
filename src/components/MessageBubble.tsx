@@ -6,7 +6,7 @@ import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import { Sparkles, Copy, Check, Edit2, RefreshCcw, Save, X, Bookmark, Download } from 'lucide-react';
+import { Sparkles, Copy, Check, Edit2, RefreshCcw, Save, X, Bookmark, Download, Smile } from 'lucide-react';
 import { Message } from '../types';
 
 interface MessageBubbleProps {
@@ -280,17 +280,12 @@ export function MessageBubble({
     <div
       className={`message-wrapper group flex gap-3 items-start transition-all duration-200 ease-out`}
     >
-      {/* AI Icon - Small and subtle */}
-      {!isUser && (
-        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-[#2a2a2a] border border-white/5 mt-1">
-          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-        </div>
-      )}
 
-      {/* User Icon - Small circle with letter */}
+
+      {/* User Icon - Smiley */}
       {isUser && (
-        <div className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center bg-[#2a2a2a] border border-white/5 text-[11px] font-medium text-white/80 mt-1">
-          F
+        <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] mt-0.5">
+          <Smile size={18} strokeWidth={2.5} />
         </div>
       )}
 
