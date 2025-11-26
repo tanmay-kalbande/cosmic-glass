@@ -277,93 +277,106 @@ export function MessageBubble({
   }), []);
 
   return (
-    <div
-      className={`message-wrapper group flex gap-3 items-start transition-all duration-200 ease-out`}
-    >
+  return (
+    <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
+      {/* User Message Structure */}
+      {isUser ? (
+        <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
+          {/* Avatar Inside */}
+          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] mt-0.5 select-none">
+            <Smile size={18} strokeWidth={2.5} />
+          </div>
 
+          {/* Content */}
+          <div className="flex-1 min-w-0">
+            {isEditing ? (
+              <div className="space-y-3">
+                <textarea
+                  ref={textareaRef}
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full min-w-[200px] min-h-[80px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-sm focus:outline-none focus:border-blue-500"
+                  placeholder={'Edit your message...'}
+                />
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={handleCancelEdit}
+                    className="text-xs text-gray-400 hover:text-white transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors"
+                    disabled={editContent.trim() === message.content || !editContent.trim()}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="prose prose-invert max-w-none text-[15px] leading-relaxed font-medium break-words">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm, remarkMath]}
+                  rehypePlugins={[rehypeKatex]}
+                  components={markdownComponents}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            )}
+          </div>
 
-      {/* User Icon - Smiley */}
-      {isUser && (
-        <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] mt-0.5">
-          <Smile size={18} strokeWidth={2.5} />
+          {/* User Actions (Edit only) */}
+          {!isEditing && (
+            <button
+              onClick={handleEdit}
+              className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-white transition-all"
+              title="Edit"
+            >
+              <Edit2 size={12} />
+            </button>
+          )}
         </div>
-      )}
-
-      {/* Message Content Container with relative positioning for action buttons */}
-      <div className="flex-1 min-w-0 relative">
-        <div className={`${isUser ? 'inline-block bg-[#2a2a2a] px-5 py-3 rounded-2xl max-w-[85%] ml-auto' : 'w-full'}`}>
-          {!isUser && displayModel && (
-            <div className="text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide">
+      ) : (
+        /* Assistant Message Structure */
+        <div className="w-full max-w-none pl-0">
+          {displayModel && (
+            <div className="text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide uppercase select-none">
               {displayModel}
             </div>
           )}
 
-          {isEditing ? (
-            <div className="space-y-3">
-              <textarea
-                ref={textareaRef}
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                onKeyDown={handleKeyDown}
-                className="w-full min-w-72 min-h-[120px] p-3 border border-[var(--color-border)] rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-[var(--color-bg)] text-[var(--color-text-primary)] font-normal"
-                placeholder={'Edit your message...'}
+          <div className="prose prose-invert max-w-none text-[16px] leading-relaxed text-[var(--color-text-primary)]">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm, remarkMath]}
+              rehypePlugins={[rehypeKatex]}
+              components={markdownComponents}
+            >
+              {message.content}
+            </ReactMarkdown>
+            {isStreaming && <StreamingIndicator />}
+          </div>
+
+          {/* Assistant Actions - Lower Right */}
+          {!isStreaming && message.content.length > 0 && (
+            <div className="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <ActionButtons
+                isUser={isUser}
+                onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
+                onEdit={handleEdit}
+                onCopy={handleCopy}
+                onSaveNote={handleSaveNote}
+                onExport={handleExport}
+                copied={copied}
+                noteSaved={noteSaved}
               />
-              <div className="flex gap-2 justify-end">
-                <button
-                  onClick={handleCancelEdit}
-                  className="interactive-button flex items-center gap-1 px-3 py-1.5 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors text-sm touch-target"
-                >
-                  <X className="w-3 h-3" />
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSaveEdit}
-                  className="interactive-button flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-colors text-sm font-medium touch-target"
-                  disabled={editContent.trim() === message.content || !editContent.trim()}
-                >
-                  <Save className="w-3 h-3" />
-                  Save
-                </button>
-              </div>
-              <p className="text-xs text-[var(--color-text-placeholder)]">
-                Press Ctrl+Enter to save, Escape to cancel
-              </p>
-            </div>
-          ) : (
-            <div className={`prose prose-invert max-w-none`} style={{
-              fontSize: isUser ? '15px' : '16px',
-              lineHeight: isUser ? '1.6' : '1.8',
-              fontWeight: isUser ? '500' : '400',
-              color: isUser ? '#ffffff' : 'inherit'
-            }}>
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm, remarkMath]}
-                rehypePlugins={[rehypeKatex]}
-                components={markdownComponents}
-              >
-                {message.content}
-              </ReactMarkdown>
-              {isStreaming && <StreamingIndicator />}
             </div>
           )}
         </div>
-
-        {/* Action buttons - positioned below message */}
-        {!isEditing && !isStreaming && message.content.length > 0 && (
-          <div className={`mt-1 flex ${isUser ? 'justify-end' : 'justify-start'} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
-            <ActionButtons
-              isUser={isUser}
-              onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
-              onEdit={handleEdit}
-              onCopy={handleCopy}
-              onSaveNote={handleSaveNote}
-              onExport={handleExport}
-              copied={copied}
-              noteSaved={noteSaved}
-            />
-          </div>
-        )}
-      </div>
+      )}
     </div>
+  );
   );
 }
