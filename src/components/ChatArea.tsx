@@ -191,7 +191,7 @@ export function ChatArea({
         className="chat-messages scroll-container relative flex flex-col"
       >
         {/* Mobile Header - Claude Style */}
-        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2 bg-[var(--color-bg)] border-b border-[var(--color-border)]">
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-2 bg-[#050505] border-b border-[var(--color-border)] w-full">
           <button
             onClick={onOpenSidebar}
             className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
