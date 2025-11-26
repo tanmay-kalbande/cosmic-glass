@@ -277,7 +277,6 @@ export function MessageBubble({
   }), []);
 
   return (
-  return (
     <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
       {/* User Message Structure */}
       {isUser ? (
