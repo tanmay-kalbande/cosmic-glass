@@ -838,6 +838,8 @@ function App() {
               onGenerateFlowchart={handleGenerateFlowchart}
               onEditMessage={handleEditMessage}
               onRegenerateResponse={handleRegenerateResponse}
+              currentModel={settings.selectedModel}
+              onModelChange={handleModelChange}
             />
           </>
         ) : activeView === 'note' ? (
