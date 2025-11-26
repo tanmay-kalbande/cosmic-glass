@@ -56,7 +56,7 @@ export function ChatArea({
       onNewConversation();
       setIsMobileNewChatCreated(true);
     }
-  }, []);
+  }, [conversation, isMobileNewChatCreated, onNewConversation]);
 
   const allMessages = useMemo(() =>
     streamingMessage ? [...(conversation?.messages || []), streamingMessage] : conversation?.messages || [],
@@ -89,25 +89,58 @@ export function ChatArea({
       <div className="chat-area hidden lg:flex flex-col items-center justify-center p-8">
         <div className="text-center max-w-2xl mx-auto space-y-8">
           {/* Logo */}
-          <div className="flex justify-center">
-            <div className="text-6xl">✨</div>
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-[var(--color-card)] rounded-2xl flex items-center justify-center p-4 border border-[var(--color-border)] shadow-lg">
+              <img
+                src="/white-logo.png"
+                alt="AI Tutor"
+                className="w-full h-full object-contain"
+              />
+            </div>
           </div>
 
           {/* Title */}
-          <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-[var(--color-text-primary)]">
+          <div className="space-y-3">
+            <h1 className="text-5xl font-bold text-[var(--color-text-primary)]">
               AI Tutor
             </h1>
-            <p className="text-sm text-[var(--color-text-secondary)]">
+            <p className="text-lg text-[var(--color-text-secondary)]">
               Ask anything. Learn everything.
             </p>
           </div>
 
+          {/* Features Grid */}
+          <div className="grid grid-cols-2 gap-4 mt-8">
+            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 hover:bg-[var(--color-bg-secondary)] transition-colors">
+              <div className="text-3xl mb-2">💡</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">Smart Learning</div>
+              <div className="text-xs text-[var(--color-text-secondary)] mt-1">Personalized explanations</div>
+            </div>
+            
+            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 hover:bg-[var(--color-bg-secondary)] transition-colors">
+              <div className="text-3xl mb-2">📝</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">Take Notes</div>
+              <div className="text-xs text-[var(--color-text-secondary)] mt-1">Save important answers</div>
+            </div>
+            
+            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 hover:bg-[var(--color-bg-secondary)] transition-colors">
+              <div className="text-3xl mb-2">🧠</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">Generate Quizzes</div>
+              <div className="text-xs text-[var(--color-text-secondary)] mt-1">Test your knowledge</div>
+            </div>
+            
+            <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 hover:bg-[var(--color-bg-secondary)] transition-colors">
+              <div className="text-3xl mb-2">🗺️</div>
+              <div className="text-sm font-semibold text-[var(--color-text-primary)]">Visual Maps</div>
+              <div className="text-xs text-[var(--color-text-secondary)] mt-1">Create flowcharts</div>
+            </div>
+          </div>
+
           {/* CTA */}
           {!hasApiKey && (
-            <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-xs text-red-400">
-                ⚠️ Configure your API key in settings first
+            <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-xl mt-6">
+              <p className="text-sm text-red-400 font-medium">
+                ⚠️ Configure your API key in settings to get started
               </p>
             </div>
           )}
@@ -124,12 +157,13 @@ export function ChatArea({
         <button
           onClick={onOpenSidebar}
           className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          aria-label="Open sidebar"
         >
           <Menu size={20} />
         </button>
 
         <span className="text-sm font-medium text-[var(--color-text-primary)] truncate max-w-[200px]">
-          {conversation?.title || 'Chat'}
+          {conversation?.title || 'New Chat'}
         </span>
 
         <div className="w-9" />
@@ -142,46 +176,94 @@ export function ChatArea({
       >
         <div className="chat-messages-container flex-1 pt-4 pb-4 px-4">
           {allMessages.length === 0 ? (
-            // Empty state - match Foxtail design
-            <div className="h-full flex flex-col items-center justify-center">
-              {/* Logo with spinning effect */}
+            // Empty state - Beautiful welcome screen
+            <div className="h-full flex flex-col items-center justify-center px-4">
+              {/* Animated Logo */}
               <div className="flex justify-center mb-8">
-                <div className="text-5xl animate-spin" style={{ animationDuration: '3s' }}>
-                  ✨
+                <div className="relative">
+                  <div className="w-16 h-16 bg-[var(--color-card)] rounded-2xl flex items-center justify-center p-3 border border-[var(--color-border)] shadow-lg">
+                    <img
+                      src="/white-logo.png"
+                      alt="AI Tutor"
+                      className="w-full h-full object-contain animate-pulse"
+                      style={{ animationDuration: '2s' }}
+                    />
+                  </div>
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-blue-500/20 rounded-2xl blur-xl -z-10"></div>
                 </div>
               </div>
 
               {/* Greeting message */}
-              <h2 className="text-3xl lg:text-4xl font-light text-[var(--color-text-primary)] text-center mb-8 tracking-wide">
-                {getGreeting()}, Friend
+              <h2 className="text-3xl lg:text-4xl font-bold text-[var(--color-text-primary)] text-center mb-3 tracking-tight">
+                {getGreeting()}
               </h2>
+              
+              <p className="text-base lg:text-lg text-[var(--color-text-secondary)] text-center mb-8 max-w-md">
+                How can I help you learn today?
+              </p>
 
-              {/* Input card for empty state (Mobile only) */}
-              <div className="lg:hidden w-full max-w-sm">
-                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl p-4 space-y-4">
-                  <div className="text-center text-sm text-[var(--color-text-secondary)]">
-                    How can I help you today?
+              {/* Quick suggestion cards - Desktop only */}
+              <div className="hidden lg:grid grid-cols-2 gap-3 w-full max-w-2xl mb-8">
+                <button
+                  onClick={() => onSendMessage("Explain quantum computing in simple terms")}
+                  className="group p-4 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl text-left hover:bg-[var(--color-bg-secondary)] hover:border-blue-500/50 transition-all duration-200"
+                >
+                  <div className="text-2xl mb-2">💡</div>
+                  <div className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
+                    Learn Something New
                   </div>
-                  
-                  {/* Quick action buttons */}
-                  <div className="flex justify-center gap-2">
-                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="New">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                      </svg>
-                    </button>
-                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="Settings">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                    </button>
-                    <button className="p-2 rounded-full bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors" title="History">
-                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 2m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </button>
+                  <div className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                    Explain quantum computing
                   </div>
+                </button>
+
+                <button
+                  onClick={() => onSendMessage("Help me solve this math problem: find the derivative of x²")}
+                  className="group p-4 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl text-left hover:bg-[var(--color-bg-secondary)] hover:border-green-500/50 transition-all duration-200"
+                >
+                  <div className="text-2xl mb-2">📐</div>
+                  <div className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
+                    Solve a Problem
+                  </div>
+                  <div className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                    Get step-by-step help
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => onSendMessage("What are the key concepts in machine learning?")}
+                  className="group p-4 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl text-left hover:bg-[var(--color-bg-secondary)] hover:border-purple-500/50 transition-all duration-200"
+                >
+                  <div className="text-2xl mb-2">🧠</div>
+                  <div className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
+                    Explore Topics
+                  </div>
+                  <div className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                    Dive into machine learning
+                  </div>
+                </button>
+
+                <button
+                  onClick={() => onSendMessage("Write a creative story about a robot learning to paint")}
+                  className="group p-4 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl text-left hover:bg-[var(--color-bg-secondary)] hover:border-pink-500/50 transition-all duration-200"
+                >
+                  <div className="text-2xl mb-2">✨</div>
+                  <div className="text-sm font-semibold text-[var(--color-text-primary)] mb-1">
+                    Be Creative
+                  </div>
+                  <div className="text-xs text-[var(--color-text-secondary)] group-hover:text-[var(--color-text-primary)] transition-colors">
+                    Generate creative content
+                  </div>
+                </button>
+              </div>
+
+              {/* Mobile tip */}
+              <div className="lg:hidden w-full max-w-md">
+                <div className="bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl p-4 text-center">
+                  <p className="text-sm text-[var(--color-text-secondary)]">
+                    Type your question below to start learning
+                  </p>
                 </div>
               </div>
             </div>
