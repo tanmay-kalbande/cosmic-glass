@@ -266,7 +266,7 @@ export function ChatInput({
         <div className="flex items-center gap-2 pb-1 pr-1">
           {/* Model Selector */}
           {currentModel && onModelChange && (
-            <div className="relative" ref={modelDropdownRef}>
+            <div className="relative hidden lg:block" ref={modelDropdownRef}>
               <button
                 type="button"
                 onClick={() => setShowModelDropdown(!showModelDropdown)}
