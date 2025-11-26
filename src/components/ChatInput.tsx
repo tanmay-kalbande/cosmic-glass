@@ -135,7 +135,7 @@ export function ChatInput({
       )}
 
       {/* Input form */}
-      <form onSubmit={handleSubmit} className="chat-input-form">
+      <form onSubmit={handleSubmit} className="chat-input-form rounded-2xl">
         {/* File attach button */}
         <button
           type="button"
@@ -180,8 +180,8 @@ export function ChatInput({
             onClick={onGenerateQuiz}
             disabled={!canGenerateQuiz || isQuizLoading || isLoading}
             className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canGenerateQuiz || isQuizLoading || isLoading
-                ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-                : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
+              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
+              : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
               }`}
             title={'Generate Quiz'}
           >
@@ -198,8 +198,8 @@ export function ChatInput({
             onClick={onGenerateFlowchart}
             disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
             className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canGenerateFlowchart || isFlowchartLoading || isLoading
-                ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-                : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
+              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
+              : 'bg-transparent text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)]'
               }`}
             title={'Generate Flowchart'}
           >
@@ -210,16 +210,16 @@ export function ChatInput({
             )}
           </button>
 
-          {/* Model Selector - Claude style */}
+          {/* Model Selector - Claude style (Mobile Only) */}
           {currentModel && onModelChange && (
-            <div className="relative mx-1" ref={modelDropdownRef}>
+            <div className="relative mx-1 lg:hidden" ref={modelDropdownRef}>
               <button
                 type="button"
                 onClick={() => setShowModelDropdown(!showModelDropdown)}
                 className="flex items-center gap-1 px-2 py-1.5 text-xs text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-border)] rounded-md transition-colors"
                 title="Select Model"
               >
-                <span className="max-w-[100px] sm:max-w-none truncate">{modelDisplayNames[currentModel]}</span>
+                <span className="max-w-[100px] truncate">{modelDisplayNames[currentModel]}</span>
                 <ChevronDown className="w-3 h-3 flex-shrink-0" />
               </button>
 
@@ -234,8 +234,8 @@ export function ChatInput({
                         setShowModelDropdown(false);
                       }}
                       className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${model === currentModel
-                          ? 'bg-[var(--color-border)] text-[var(--color-text-primary)]'
-                          : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-text-primary)]'
+                        ? 'bg-[var(--color-border)] text-[var(--color-text-primary)]'
+                        : 'text-[var(--color-text-secondary)] hover:bg-[var(--color-border)] hover:text-[var(--color-text-primary)]'
                         }`}
                     >
                       {modelDisplayNames[model]}
@@ -251,8 +251,8 @@ export function ChatInput({
             type="submit"
             disabled={!canSend || isLoading}
             className={`interactive-button w-9 h-9 flex items-center justify-center rounded-lg transition-all duration-200 ${!canSend || isLoading
-                ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
-                : 'bg-[var(--color-accent-bg)] text-[var(--color-bg)] hover:bg-[var(--color-accent-bg-hover)]'
+              ? 'bg-transparent text-[var(--color-text-placeholder)] cursor-not-allowed opacity-50'
+              : 'bg-[var(--color-accent-bg)] text-[var(--color-bg)] hover:bg-[var(--color-accent-bg-hover)]'
               }`}
             title={'Send message'}
           >
