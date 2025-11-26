@@ -353,9 +353,9 @@ export function MessageBubble({
           )}
         </div>
 
-        {/* Action buttons - positioned below message for assistant, or right for user */}
+        {/* Action buttons - positioned below message */}
         {!isEditing && !isStreaming && message.content.length > 0 && (
-          <div className={`${isUser ? 'absolute bottom-2 right-full mr-2 opacity-0 group-hover:opacity-100' : 'mt-1 opacity-0 group-hover:opacity-100'} transition-opacity duration-200`}>
+          <div className={`mt-1 flex ${isUser ? 'justify-end' : 'justify-start'} opacity-0 group-hover:opacity-100 transition-opacity duration-200`}>
             <ActionButtons
               isUser={isUser}
               onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
