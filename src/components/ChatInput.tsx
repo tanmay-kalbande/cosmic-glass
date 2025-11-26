@@ -141,7 +141,7 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl lg:rounded-3xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-sm focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left Actions */}
         <div className="flex items-center gap-1 pb-1 pl-1">
@@ -158,7 +158,7 @@ export function ChatInput({
 
             {/* Mobile Dropdown Menu */}
             {showMobileMenu && (
-              <div className="absolute bottom-full left-0 mb-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-xl p-2 min-w-[180px] z-50 flex flex-col gap-1">
+              <div className="absolute bottom-full left-0 mb-2 bg-[#1e1e1e] border border-[var(--color-border)] rounded-xl shadow-xl p-2 min-w-[180px] z-50 flex flex-col gap-1">
                 <button
                   type="button"
                   onClick={handlePlusClick}
@@ -270,14 +270,14 @@ export function ChatInput({
               <button
                 type="button"
                 onClick={() => setShowModelDropdown(!showModelDropdown)}
-                className="flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
+                className="flex items-center gap-1 px-1.5 py-1 text-[10px] sm:text-xs font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
               >
                 <span className="max-w-[80px] sm:max-w-[120px] truncate">{modelDisplayNames[currentModel]}</span>
                 <ChevronDown className="w-3 h-3 flex-shrink-0" />
               </button>
 
               {showModelDropdown && (
-                <div className="absolute bottom-full right-0 mb-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-xl shadow-xl py-1 max-h-64 overflow-y-auto z-50 min-w-[200px]">
+                <div className="absolute bottom-full right-0 mb-2 bg-[#1e1e1e] border border-[var(--color-border)] rounded-xl shadow-xl py-1 max-h-64 overflow-y-auto z-50 min-w-[200px]">
                   {(Object.keys(modelDisplayNames) as AIModel[]).map((model) => (
                     <button
                       key={model}
