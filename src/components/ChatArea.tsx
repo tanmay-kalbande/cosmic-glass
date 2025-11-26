@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react'
 import { MessageBubble } from './MessageBubble';
 import { ChatInput } from './ChatInput';
 import { Conversation, Message, AIModel } from '../types';
-import { Settings, Clock, Plus, ArrowUp, ChevronDown } from 'lucide-react';
+import { Settings, Clock, Plus, ArrowUp, ChevronDown, Menu, Share, MoreHorizontal, Sparkles } from 'lucide-react';
 
 interface ChatAreaProps {
   conversation: Conversation | undefined;
@@ -23,6 +23,7 @@ interface ChatAreaProps {
   onRegenerateResponse?: (messageId: string) => void;
   currentModel?: AIModel;
   onModelChange?: (model: AIModel) => void;
+  onOpenSidebar?: () => void;
 }
 
 export function ChatArea({
@@ -42,6 +43,7 @@ export function ChatArea({
   onRegenerateResponse,
   currentModel,
   onModelChange,
+  onOpenSidebar,
 }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatMessagesRef = useRef<HTMLDivElement>(null);
@@ -186,9 +188,30 @@ export function ChatArea({
     <div className="chat-area">
       <div
         ref={chatMessagesRef}
-        className="chat-messages scroll-container"
+        className="chat-messages scroll-container relative flex flex-col"
       >
-        <div className="chat-messages-container h-full">
+        {/* Mobile Header - Claude Style */}
+        <div className="lg:hidden sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-[var(--color-bg)]/80 backdrop-blur-md border-b border-[var(--color-border)]">
+          <button 
+            onClick={onOpenSidebar}
+            className="p-2 -ml-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
+          >
+            <Menu size={20} />
+          </button>
+          
+          <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors">
+            <span className="font-serif text-lg font-medium text-[var(--color-text-primary)]">
+              {conversation?.title || 'New Chat'}
+            </span>
+            <ChevronDown size={14} className="text-[var(--color-text-secondary)]" />
+          </button>
+
+          <button className="p-2 -mr-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] transition-colors rounded-full border border-[var(--color-border)]">
+            <Share size={16} />
+          </button>
+        </div>
+
+        <div className="chat-messages-container h-full flex-1">
           {allMessages.length === 0 ? (
             // State 2a: The selected conversation is empty.
             // State 2a: The selected conversation is empty.
@@ -330,6 +353,19 @@ export function ChatArea({
                   onRegenerateResponse={onRegenerateResponse}
                 />
               ))}
+            </div>
+            
+            {/* Branding Divider & Disclaimer */}
+            <div className="pb-4 space-y-6">
+              <div className="flex items-center justify-center gap-4 opacity-50">
+                <div className="h-px w-12 bg-gradient-to-r from-transparent to-[var(--color-border)]" />
+                <Sparkles size={16} className="text-[var(--color-accent)] animate-pulse" />
+                <div className="h-px w-12 bg-gradient-to-l from-transparent to-[var(--color-border)]" />
+              </div>
+              
+              <p className="text-center text-xs text-[var(--color-text-placeholder)] font-medium">
+                Responses may contain mistakes. Please verify important information.
+              </p>
             </div>
           )}
           <div ref={messagesEndRef} className="h-1 flex-shrink-0" />
