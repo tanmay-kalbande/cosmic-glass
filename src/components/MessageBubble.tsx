@@ -18,27 +18,21 @@ interface MessageBubbleProps {
 }
 
 const modelNames: Record<string, string> = {
-  // Google Models
   'gemini-2.5-pro': 'Gemini 2.5 Pro',
   'gemini-2.5-flash': 'Gemini 2.5 Flash',
   'gemma-3-27b-it': 'Gemma 3 27B',
-  // Mistral Models
   'mistral-large-latest': 'Mistral Large',
   'mistral-medium-latest': 'Mistral Medium',
   'mistral-small-latest': 'Mistral Small',
   'codestral-latest': 'Codestral',
-  // Zhipu Models
   'glm-4.5-flash': 'GLM 4.5 Flash',
-  // Groq Models
   'llama-3.3-70b-versatile': 'Llama 3.3 70B',
   'openai/gpt-oss-20b': 'GPT OSS 20B',
-  // Cerebras Models
   'gpt-oss-120b': 'GPT OSS 120B',
   'qwen-3-235b-a22b-instruct-2507': 'Qwen 3 235B',
   'zai-glm-4.6': 'ZAI GLM 4.6',
 };
 
-// Memoized code block component to prevent unnecessary re-renders
 const CodeBlock = React.memo(({ language, children }: { language: string; children: string; }) => {
   const [copied, setCopied] = useState(false);
   const codeContent = String(children).replace(/\n$/, '');
@@ -60,11 +54,7 @@ const CodeBlock = React.memo(({ language, children }: { language: string; childr
           className="interactive-button p-1.5 bg-gray-800/80 rounded hover:bg-gray-700 text-gray-300 transition-colors touch-target"
           title={'Copy code'}
         >
-          {copied ? (
-            <Check className="w-3.5 h-3.5" />
-          ) : (
-            <Copy className="w-3.5 h-3.5" />
-          )}
+          {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
       </div>
       <SyntaxHighlighter
@@ -79,14 +69,12 @@ const CodeBlock = React.memo(({ language, children }: { language: string; childr
   );
 });
 
-// Memoized streaming indicator to prevent layout shifts
 const StreamingIndicator = React.memo(() => (
   <span className="inline-flex items-center ml-1">
     <span className="w-2 h-2 bg-[var(--color-text-placeholder)] rounded-full animate-pulse" />
   </span>
 ));
 
-// Memoized action buttons - compact toolbar
 const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSaveNote, onExport, copied, noteSaved }: {
   isUser: boolean;
   onRegenerate?: () => void;
@@ -144,11 +132,10 @@ export function MessageBubble({
   const [copied, setCopied] = useState(false);
   const [noteSaved, setNoteSaved] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
-  const [isEditing, setIsEditing] = useState(message.isEditing || false);
+  const [isEditing, setIsEditing] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const copyTimeoutRef = useRef<NodeJS.Timeout>();
 
-  // Memoize display model to prevent unnecessary recalculations
   const displayModel = useMemo(() => {
     if (isUser || !message.model) return undefined;
     return modelNames[message.model] || 'AI Assistant';
@@ -171,7 +158,7 @@ export function MessageBubble({
     if (onSaveAsNote) {
       onSaveAsNote(message.content);
       setNoteSaved(true);
-      setTimeout(() => setNoteSaved(false), 2500); // Visual feedback for 2.5s
+      setTimeout(() => setNoteSaved(false), 2500);
     }
   }, [message.content, onSaveAsNote]);
 
@@ -210,12 +197,13 @@ export function MessageBubble({
     }
   }, [message.id, onRegenerateResponse]);
 
-  // Auto-resize textarea
   useEffect(() => {
     if (isEditing && textareaRef.current) {
       const textarea = textareaRef.current;
       textarea.style.height = 'auto';
       textarea.style.height = `${textarea.scrollHeight}px`;
+      textarea.focus();
+      textarea.setSelectionRange(textarea.value.length, textarea.value.length);
     }
   }, [isEditing, editContent]);
 
@@ -227,7 +215,6 @@ export function MessageBubble({
     }
   }, [handleSaveEdit, handleCancelEdit]);
 
-  // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
       if (copyTimeoutRef.current) {
@@ -236,17 +223,11 @@ export function MessageBubble({
     };
   }, []);
 
-  // Memoize markdown components to prevent re-creation on every render
   const markdownComponents = useMemo(() => ({
     code({ node, inline, className, children, ...props }: any) {
       const match = /language-(\w+)/.exec(className || '');
       if (!inline && match) {
-        return (
-          <CodeBlock
-            language={match[1]}
-            children={String(children)}
-          />
-        );
+        return <CodeBlock language={match[1]} children={String(children)} />;
       } else {
         return (
           <code className="bg-[#1a1a1a] px-2 py-0.5 rounded text-[13px] font-mono border border-white/10" {...props}>
@@ -278,44 +259,28 @@ export function MessageBubble({
 
   return (
     <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
-      {/* User Message Structure */}
       {isUser ? (
         <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
-          {/* Avatar Inside */}
-          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none">
+          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none mt-0.5">
             <Smile size={18} strokeWidth={2.5} />
           </div>
 
-          {/* Content */}
           <div className="flex-1 min-w-0">
             {isEditing ? (
-              <div className="space-y-3">
-                <textarea
-                  ref={textareaRef}
-                  value={editContent}
-                  onChange={(e) => setEditContent(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="w-full min-w-[200px] min-h-[80px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-sm focus:outline-none focus:border-blue-500"
-                  placeholder={'Edit your message...'}
-                />
-                <div className="flex gap-2 justify-end">
-                  <button
-                    onClick={handleCancelEdit}
-                    className="text-xs text-gray-400 hover:text-white transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleSaveEdit}
-                    className="text-xs bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded transition-colors"
-                    disabled={editContent.trim() === message.content || !editContent.trim()}
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
+              <textarea
+                ref={textareaRef}
+                value={editContent}
+                onChange={(e) => setEditContent(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onBlur={handleSaveEdit}
+                className="w-full min-w-[200px] min-h-[60px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
+                placeholder={'Edit your message...'}
+              />
             ) : (
-              <div className="prose prose-invert max-w-none text-[15px] leading-relaxed font-medium break-words">
+              <div 
+                onClick={handleEdit}
+                className="prose prose-invert max-w-none text-base leading-relaxed font-semibold break-words cursor-text hover:opacity-80 transition-opacity"
+              >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -326,20 +291,8 @@ export function MessageBubble({
               </div>
             )}
           </div>
-
-          {/* User Actions (Edit only) */}
-          {!isEditing && (
-            <button
-              onClick={handleEdit}
-              className="opacity-0 group-hover:opacity-100 p-1 text-gray-400 hover:text-white transition-all"
-              title="Edit"
-            >
-              <Edit2 size={12} />
-            </button>
-          )}
         </div>
       ) : (
-        /* Assistant Message Structure */
         <div className="w-full max-w-none pl-0">
           {displayModel && (
             <div className="text-[10px] text-[var(--color-text-secondary)] mb-1.5 font-medium tracking-wide uppercase select-none">
@@ -358,7 +311,6 @@ export function MessageBubble({
             {isStreaming && <StreamingIndicator />}
           </div>
 
-          {/* Assistant Actions - Lower Right */}
           {!isStreaming && message.content.length > 0 && (
             <div className="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <ActionButtons
@@ -377,5 +329,4 @@ export function MessageBubble({
       )}
     </div>
   );
-
 }
