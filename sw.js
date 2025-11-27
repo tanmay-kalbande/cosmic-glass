@@ -1,8 +1,8 @@
-const CACHE_NAME = 'ai-tutor-v1';
+const CACHE_NAME = 'coze-v1';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/tutor.png',
+  '/coze.svg',
   '/manifest.json',
   // Add other static assets as needed
 ];
@@ -95,8 +95,8 @@ self.addEventListener('push', event => {
   if (event.data) {
     const options = {
       body: event.data.text(),
-      icon: '/tutor.png',
-      badge: '/tutor.png',
+      icon: '/coze.svg',
+      badge: '/coze.svg',
       vibrate: [100, 50, 100],
       data: {
         dateOfArrival: Date.now(),
@@ -105,7 +105,7 @@ self.addEventListener('push', event => {
     };
     
     event.waitUntil(
-      self.registration.showNotification('AI Tutor', options)
+      self.registration.showNotification('Coze', options)
     );
   }
 });
