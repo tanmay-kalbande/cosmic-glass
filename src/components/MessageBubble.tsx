@@ -1,3 +1,5 @@
+// src/components/MessageBubble.tsx
+
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -239,9 +241,9 @@ export function MessageBubble({
   return (
     <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
       {isUser ? (
-        <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 w-full sm:max-w-[85%] shadow-sm">
+        <div className="flex items-center gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 w-fit sm:max-w-[85%] shadow-sm">
           {/* Emoji - aligned with first line */}
-          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none" style={{ marginTop: '2px' }}>
+          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none">
             <Smile size={18} strokeWidth={2.5} />
           </div>
 
@@ -277,7 +279,7 @@ export function MessageBubble({
               </div>
             ) : (
               <div 
-                className="prose prose-invert max-w-none text-[15px] leading-relaxed font-medium break-words"
+                className="prose prose-invert max-w-none text-[15px] leading-relaxed font-semibold break-words"
                 style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
               >
                 <ReactMarkdown
