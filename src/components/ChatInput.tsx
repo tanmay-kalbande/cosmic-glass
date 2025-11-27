@@ -95,7 +95,7 @@ export function ChatInput({
   const resizeTextarea = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      const newHeight = Math.min(textareaRef.current.scrollHeight, 120);
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 100);
       textareaRef.current.style.height = `${newHeight}px`;
     }
   }, []);
@@ -134,7 +134,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-2 sm:pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-4 pb-2 sm:pb-2">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -294,11 +294,6 @@ export function ChatInput({
           <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
         </button>
       </form>
-
-      {/* Footer hint */}
-      <p className="text-center text-[9px] text-[var(--color-text-placeholder)] py-2 mt-2 hidden lg:block">
-        Shift + Enter for new line
-      </p>
     </div>
   );
 }
