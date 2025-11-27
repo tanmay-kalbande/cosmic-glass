@@ -264,26 +264,28 @@ export function MessageBubble({
     <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
       {isUser ? (
         <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
-          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none mt-0.5">
+          {/* Emoji - aligned with first line */}
+          <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none" style={{ marginTop: '2px' }}>
             <Smile size={18} strokeWidth={2.5} />
           </div>
 
-          <div className="flex-1 min-w-0">
+          {/* Content area */}
+          <div className="flex-1 min-w-0 max-w-full">
             {isEditing ? (
-              <div className="space-y-2">
+              <div className="w-full">
                 <textarea
                   ref={textareaRef}
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full min-w-[200px] min-h-[60px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
+                  className="w-full min-h-[60px] p-3 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
                   placeholder="Edit your message..."
                 />
-                <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-end mt-2">
                   <button
                     onClick={handleCancelEdit}
                     className="p-1.5 rounded-md hover:bg-[#1a1a1a] text-gray-400 hover:text-white transition-colors"
-                    title="Cancel"
+                    title="Cancel (Esc)"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -297,10 +299,7 @@ export function MessageBubble({
                 </div>
               </div>
             ) : (
-              <div 
-                onClick={handleEdit}
-                className="prose prose-invert max-w-none text-base leading-relaxed font-semibold break-words cursor-text hover:opacity-80 transition-opacity"
-              >
+              <div className="prose prose-invert max-w-none text-base leading-relaxed font-semibold break-words">
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -312,10 +311,11 @@ export function MessageBubble({
             )}
           </div>
 
+          {/* Edit button - only shows when NOT editing */}
           {!isEditing && (
             <button
               onClick={handleEdit}
-              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-white transition-all rounded-md hover:bg-[#1a1a1a] flex-shrink-0"
+              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-white transition-all rounded-md hover:bg-[#1a1a1a] flex-shrink-0 self-start"
               title="Edit"
             >
               <Edit2 className="w-4 h-4" />
