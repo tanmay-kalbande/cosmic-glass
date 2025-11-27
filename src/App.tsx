@@ -1,5 +1,3 @@
-// src/App.tsx
-
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ChatArea } from './components/ChatArea';
@@ -9,7 +7,6 @@ import { InstallPrompt } from './components/InstallPrompt';
 import { SettingsModal } from './components/SettingsModal';
 import { QuizModal } from './components/QuizModal';
 import { Notification } from './components/Notification';
-import { ModeSuggestionBanner } from './components/ModeSuggestionBanner';
 import { Conversation, Message, APISettings, Note, StudySession, Flowchart, TutorMode } from './types';
 import { generateId } from './utils/helpers';
 import { generateSmartTitle } from './services/titleGenerator';
@@ -18,7 +15,6 @@ import { Menu } from 'lucide-react';
 import { storageUtils } from './utils/storage';
 import { aiService } from './services/aiService';
 import { generateFlowchartFromConversation } from './services/flowchartGenerator';
-import { detectBestMode, shouldSuggestMode } from './services/modeDetection';
 import { ShootingStars } from './components/ShootingStars';
 
 type ActiveView = 'chat' | 'note' | 'flowchart';
@@ -59,12 +55,6 @@ function App() {
     message: '',
     type: 'success'
   });
-
-  // Mode suggestion state
-  const [modeSuggestion, setModeSuggestion] = useState<{
-    mode: TutorMode;
-    show: boolean;
-  } | null>(null);
 
   // Use AbortController for proper cancellation
   const abortControllerRef = useRef<AbortController | null>(null);
@@ -110,42 +100,6 @@ function App() {
     aiService.updateSettings(settings);
   }, [settings]);
 
-  // Shooting star effect - triggers every 60 seconds
-  // useEffect(() => {
-  //   const createShootingStar = () => {
-  //     const star = document.createElement('div');
-  //     star.className = 'shooting-star';
-  //
-  //     // Random starting position (top 20% of screen, random horizontal)
-  //     const startX = Math.random() * window.innerWidth;
-  //     const startY = Math.random() * (window.innerHeight * 0.2);
-  //
-  //     star.style.left = `${startX}px`;
-  //     star.style.top = `${startY}px`;
-  //
-  //     document.body.appendChild(star);
-  //
-  //     // Trigger animation
-  //     setTimeout(() => star.classList.add('active'), 10);
-  //
-  //     // Remove after animation completes
-  //     setTimeout(() => {
-  //       star.remove();
-  //     }, 1600);
-  //   };
-  //
-  //   // Create shooting star every 60 seconds
-  //   const interval = setInterval(createShootingStar, 60000);
-  //
-  //   // Create first one after 5 seconds
-  //   const initialTimeout = setTimeout(createShootingStar, 5000);
-  //
-  //   return () => {
-  //     clearInterval(interval);
-  //     clearTimeout(initialTimeout);
-  //   };
-  // }, []);
-
   // Debounced save to prevent too frequent writes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -172,11 +126,10 @@ function App() {
     localStorage.setItem('ai-tutor-sidebar-folded', JSON.stringify(sidebarFolded));
   }, [sidebarFolded]);
 
-  // Close quiz modal and mode suggestion when conversation changes
+  // Close quiz modal when conversation changes
   useEffect(() => {
     setIsQuizModalOpen(false);
     setStudySession(null);
-    setModeSuggestion(null);
   }, [currentConversationId]);
 
   // --- MEMOS ---
@@ -275,17 +228,7 @@ function App() {
       };
       setConversations(prev => [conversationToUpdate, ...prev]);
       handleSelectConversation(conversationToUpdate.id);
-
-      // ✨ Smart mode detection on first message of new conversation
-      const detection = detectBestMode(content);
-      if (shouldSuggestMode(detection, settings.selectedTutorMode)) {
-        setModeSuggestion({
-          mode: detection.suggestedMode,
-          show: true
-        });
-      }
     } else {
-      // ✨ Smart mode detection on first message of existing empty conversation
       let titleToUse = existingConversation.title;
 
       if (existingConversation.messages.length === 0) {
@@ -300,14 +243,6 @@ function App() {
             ));
           }
         );
-
-        const detection = detectBestMode(content);
-        if (shouldSuggestMode(detection, settings.selectedTutorMode)) {
-          setModeSuggestion({
-            mode: detection.suggestedMode,
-            show: true
-          });
-        }
       }
 
       conversationToUpdate = {
@@ -411,7 +346,7 @@ function App() {
 
     const history = conversation.messages.slice(0, messageIndex);
     if (history.length === 0 || history[history.length - 1].role !== 'user') {
-      console.error("Cannot regenerate without a preceding user message.");
+      console.error(\"Cannot regenerate without a preceding user message.\");
       showNotification('Cannot regenerate this message', 'error');
       return;
     }
@@ -611,7 +546,7 @@ function App() {
 
       const a = document.createElement('a');
       a.href = url;
-      const fileName = `${flowchart.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `${flowchart.title.replace(/\\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
@@ -631,47 +566,6 @@ function App() {
       setCurrentFlowchartId(null);
       setActiveView('chat');
     }
-  };
-
-  // --- MODE SUGGESTION HANDLERS ---
-  const handleAcceptModeSuggestion = async () => {
-    if (!modeSuggestion) return;
-
-    const newMode = modeSuggestion.mode;
-
-    // Get friendly mode name
-    const modeNames: Record<TutorMode, string> = {
-      standard: 'Standard Tutor',
-      exam: 'Exam Coach',
-      mentor: 'Friendly Mentor',
-      creative: 'Creative Guide'
-    };
-
-    // Switch mode first
-    handleTutorModeChange(newMode);
-    setModeSuggestion(null);
-
-    // Show notification
-    showNotification(`Switched to ${modeNames[newMode]} mode! Regenerating response...`, 'success');
-
-    // Auto-regenerate the last assistant message if it exists
-    const conversation = conversations.find(c => c.id === currentConversationId);
-    if (conversation && conversation.messages.length > 0) {
-      // Find the last assistant message
-      const lastAssistantMessage = [...conversation.messages].reverse().find(m => m.role === 'assistant');
-
-      if (lastAssistantMessage) {
-        // Wait a bit for the mode to update
-        await new Promise(resolve => setTimeout(resolve, 100));
-
-        // Trigger regeneration
-        handleRegenerateResponse(lastAssistantMessage.id);
-      }
-    }
-  };
-
-  const handleDismissModeSuggestion = () => {
-    setModeSuggestion(null);
   };
 
   // --- OTHER HANDLERS ---
@@ -711,9 +605,9 @@ function App() {
     if (oldMode !== newMode) {
       const modeNames: Record<TutorMode, string> = {
         standard: 'Standard Tutor',
-        exam: 'Exam Coach',
         mentor: 'Friendly Mentor',
-        creative: 'Creative Guide'
+        cosmic: 'Cosmic Nerd',
+        ayanokoji: 'Ayanokoji'
       };
       showNotification(`Switched to ${modeNames[newMode]} mode. Regenerating response...`, 'success');
 
@@ -724,7 +618,6 @@ function App() {
         );
 
         if (lastAssistantMessage) {
-          // Use a timeout to ensure settings state propagates before API call
           setTimeout(() => {
             handleRegenerateResponse(lastAssistantMessage.id);
           }, 100);
@@ -760,7 +653,7 @@ function App() {
   );
 
   return (
-    <div className="app-container">
+    <div className=\"app-container\">
       <ShootingStars />
       {/* Notification */}
       {notification.show && (
@@ -772,7 +665,7 @@ function App() {
       )}
 
       {sidebarOpen && window.innerWidth < 1024 && (
-        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
+        <div className=\"sidebar-backdrop\" onClick={() => setSidebarOpen(false)} />
       )}
       <Sidebar
         conversations={sortedConversations}
@@ -799,51 +692,38 @@ function App() {
         onToggleFold={() => setSidebarFolded(!sidebarFolded)}
         isSidebarOpen={sidebarOpen}
       />
-      <div className="main-content">
+      <div className=\"main-content\">
         {!sidebarOpen && activeView !== 'chat' && (
           <button
             onClick={() => setSidebarOpen(true)}
-            className="fixed top-3 left-3 z-40 p-2 glass-panel rounded-full shadow-lg hover:bg-white/10 transition-all duration-300 lg:hidden btn-shine group"
-            title="Open sidebar"
-            aria-label="Open sidebar"
+            className=\"fixed top-3 left-3 z-40 p-2 glass-panel rounded-full shadow-lg hover:bg-white/10 transition-all duration-300 lg:hidden btn-shine group\"
+            title=\"Open sidebar\"
+            aria-label=\"Open sidebar\"
           >
-            <Menu className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" />
+            <Menu className=\"w-5 h-5 text-white/80 group-hover:text-white transition-colors\" />
           </button>
         )}
         {activeView === 'chat' ? (
-          <>
-            {/* Mode suggestion banner */}
-            {modeSuggestion?.show && (
-              <div className="py-2">
-                <ModeSuggestionBanner
-                  suggestedMode={modeSuggestion.mode}
-                  onAccept={handleAcceptModeSuggestion}
-                  onDismiss={handleDismissModeSuggestion}
-                />
-              </div>
-            )}
-
-            <ChatArea
-  conversation={currentConversation}
-  onSendMessage={handleSendMessage}
-  onNewConversation={handleNewConversation}
-  isLoading={isChatLoading}
-  isQuizLoading={isQuizLoading}
-  isFlowchartLoading={isFlowchartLoading}
-  streamingMessage={streamingMessage}
-  hasApiKey={hasApiKey}
-  onStopGenerating={handleStopGenerating}
-  onSaveAsNote={handleSaveAsNote}
-  onGenerateQuiz={handleGenerateQuiz}
-  onGenerateFlowchart={handleGenerateFlowchart}
-  onEditMessage={handleEditMessage}
-  onRegenerateResponse={handleRegenerateResponse}
-  currentModel={settings.selectedModel}
-  onModelChange={handleModelChange}
-  onOpenSidebar={() => setSidebarOpen(true)}
-  onSelectConversation={handleSelectConversation}
-/>
-          </>
+          <ChatArea
+            conversation={currentConversation}
+            onSendMessage={handleSendMessage}
+            onNewConversation={handleNewConversation}
+            isLoading={isChatLoading}
+            isQuizLoading={isQuizLoading}
+            isFlowchartLoading={isFlowchartLoading}
+            streamingMessage={streamingMessage}
+            hasApiKey={hasApiKey}
+            onStopGenerating={handleStopGenerating}
+            onSaveAsNote={handleSaveAsNote}
+            onGenerateQuiz={handleGenerateQuiz}
+            onGenerateFlowchart={handleGenerateFlowchart}
+            onEditMessage={handleEditMessage}
+            onRegenerateResponse={handleRegenerateResponse}
+            currentModel={settings.selectedModel}
+            onModelChange={handleModelChange}
+            onOpenSidebar={() => setSidebarOpen(true)}
+            onSelectConversation={handleSelectConversation}
+          />
         ) : activeView === 'note' ? (
           <NoteView note={currentNote} />
         ) : (
