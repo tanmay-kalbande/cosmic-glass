@@ -1,7 +1,6 @@
-// src/components/ChatInput.tsx
-
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
+import { Send, Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
+import type { AIModel } from '../types';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -96,7 +95,7 @@ export function ChatInput({
   const resizeTextarea = useCallback(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
-      const newHeight = Math.min(textareaRef.current.scrollHeight, 100);
+      const newHeight = Math.min(textareaRef.current.scrollHeight, 120);
       textareaRef.current.style.height = `${newHeight}px`;
     }
   }, []);
@@ -135,7 +134,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-1 sm:pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-2 sm:pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -213,7 +212,7 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-1 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-center gap-2 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left attachment button */}
         <button
@@ -234,8 +233,8 @@ export function ChatInput({
           className="hidden"
         />
 
-        {/* Text area - Adjusted vertical alignment */}
-        <div className="flex-1 min-w-0">
+        {/* Text area */}
+        <div className="flex-1 min-w-0 py-1">
           <textarea
             ref={textareaRef}
             value={input}
@@ -243,14 +242,14 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Tutor..."
             disabled={disabled || isLoading}
-            className="w-full max-h-[100px] py-2 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed font-medium"
+            className="w-full max-h-[100px] bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed"
             rows={1}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           />
         </div>
 
         {/* Right actions - Desktop only */}
-        <div className="hidden lg:flex items-center gap-1 pb-1 flex-shrink-0">
+        <div className="hidden lg:flex items-center gap-1 flex-shrink-0">
           <button
             type="button"
             onClick={onGenerateQuiz}
