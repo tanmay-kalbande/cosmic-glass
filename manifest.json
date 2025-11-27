@@ -1,27 +1,39 @@
 {
-  "name": "AI Tutor Chat Application",
-  "short_name": "AI Tutor",
-  "description": "Your personal AI tutor for learning and answering questions",
+  "name": "Coze",
+  "short_name": "Coze",
+  "description": "A powerful AI chat application",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#374151",
+  "background_color": "#050505",
+  "theme_color": "#050505",
   "orientation": "portrait-primary",
   "scope": "/",
   "lang": "en",
   "categories": ["education", "productivity"],
   "icons": [
     {
-      "src": "/tutor.png",
+      "src": "/coze.svg",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/svg+xml",
+      "purpose": "any"
     },
     {
-      "src": "/tutor.png",
+      "src": "/coze.svg",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable any"
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/coze.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/coze.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -32,24 +44,10 @@
       "url": "/?action=new-chat",
       "icons": [
         {
-          "src": "/tutor.png",
+          "src": "/coze.svg",
           "sizes": "96x96"
         }
       ]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/tutor.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/tutor.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
     }
   ]
 }
