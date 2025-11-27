@@ -1,3 +1,5 @@
+// src/components/ChatInput.tsx
+
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
 
@@ -32,13 +34,14 @@ export function ChatInput({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle mobile keyboard visibility
+  // Handle mobile keyboard visibility - Keep input above keyboard
   useEffect(() => {
     let isKeyboardOpen = false;
 
     const handleFocus = () => {
       if (window.innerWidth <= 768 && containerRef.current) {
         isKeyboardOpen = true;
+        // Force input to scroll into view
         setTimeout(() => {
           containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
         }, 300);
@@ -132,7 +135,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-2 sm:pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-1 sm:pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -146,7 +149,7 @@ export function ChatInput({
         </div>
       )}
 
-      {/* Mobile Actions Menu */}
+      {/* Mobile Actions Menu with closing animation */}
       {showMobileActions && (
         <div 
           className="lg:hidden mb-3 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg"
@@ -210,16 +213,16 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-1 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left attachment button */}
         <button
           type="button"
           onClick={handlePlusClick}
-          className="p-2 my-1 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-xl transition-colors flex-shrink-0"
+          className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors flex-shrink-0"
           title="Attach file"
         >
-          <Paperclip className="w-5 h-5" />
+          <Paperclip className="w-4 h-4" />
         </button>
 
         {/* Hidden file input */}
@@ -231,7 +234,7 @@ export function ChatInput({
           className="hidden"
         />
 
-        {/* Text area - Increased top padding (py-3) to fix uplift issue */}
+        {/* Text area - Adjusted vertical alignment */}
         <div className="flex-1 min-w-0">
           <textarea
             ref={textareaRef}
@@ -240,7 +243,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Tutor..."
             disabled={disabled || isLoading}
-            className="w-full max-h-[120px] py-3 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed font-medium"
+            className="w-full max-h-[100px] py-2 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed font-medium"
             rows={1}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           />
@@ -252,20 +255,20 @@ export function ChatInput({
             type="button"
             onClick={onGenerateQuiz}
             disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-            className={`p-2 rounded-xl transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            className={`p-1.5 rounded-lg transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
             title="Generate Quiz"
           >
-            {isQuizLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <ClipboardCheck className="w-5 h-5" />}
+            {isQuizLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
           </button>
 
           <button
             type="button"
             onClick={onGenerateFlowchart}
             disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-            className={`p-2 rounded-xl transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            className={`p-1.5 rounded-lg transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
             title="Generate Flowchart"
           >
-            {isFlowchartLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GitBranch className="w-5 h-5" />}
+            {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
           </button>
         </div>
 
@@ -273,23 +276,23 @@ export function ChatInput({
         <button
           type="button"
           onClick={() => setShowMobileActions(!showMobileActions)}
-          className="lg:hidden p-2 my-1 rounded-xl transition-colors bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex-shrink-0"
+          className="lg:hidden p-2 rounded-lg transition-colors bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex-shrink-0"
           title="More actions"
         >
-          <MoreHorizontal className="w-5 h-5" />
+          <MoreHorizontal className="w-4 h-4" />
         </button>
 
-        {/* Send button - Reverted to rounded-xl (soft square) */}
+        {/* Send button */}
         <button
           type="submit"
           disabled={!canSend || isLoading}
-          className={`p-2 my-1 rounded-xl transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
+          className={`p-2 rounded-lg transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
             ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-placeholder)] cursor-not-allowed'
             : 'bg-[#D4704F] hover:bg-[#E08050] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
             }`}
           title="Send message (Shift+Enter for new line)"
         >
-          <ArrowUp className="w-5 h-5" strokeWidth={2.5} />
+          <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
         </button>
       </form>
 
