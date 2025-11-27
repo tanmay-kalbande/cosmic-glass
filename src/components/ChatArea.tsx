@@ -92,8 +92,8 @@ export function ChatArea({
           <div className="flex justify-center mb-6">
             <div className="w-20 h-20 bg-[var(--color-card)] rounded-2xl flex items-center justify-center p-4 border border-[var(--color-border)] shadow-lg">
               <img
-                src="/white-logo.png"
-                alt="AI Tutor"
+                src="/coze.svg"
+                alt="Mono"
                 className="w-full h-full object-contain"
               />
             </div>
@@ -102,7 +102,7 @@ export function ChatArea({
           {/* Title */}
           <div className="space-y-3">
             <h1 className="text-5xl font-bold text-[var(--color-text-primary)]">
-              AI Tutor
+              Mono
             </h1>
             <p className="text-lg text-[var(--color-text-secondary)]">
               Ask anything. Learn everything.
@@ -183,8 +183,8 @@ export function ChatArea({
                 <div className="relative">
                   <div className="w-16 h-16 bg-[var(--color-card)] rounded-2xl flex items-center justify-center p-3 border border-[var(--color-border)] shadow-lg">
                     <img
-                      src="/white-logo.png"
-                      alt="AI Tutor"
+                      src="/coze.svg"
+                      alt="Mono"
                       className="w-full h-full object-contain animate-pulse"
                       style={{ animationDuration: '2s' }}
                     />
