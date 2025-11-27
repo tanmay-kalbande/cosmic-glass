@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp } from 'lucide-react';
+import { Send, Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
 import type { AIModel } from '../types';
 
 interface ChatInputProps {
@@ -28,8 +28,44 @@ export function ChatInput({
   canGenerateFlowchart,
 }: ChatInputProps) {
   const [input, setInput] = useState('');
+  const [showMobileActions, setShowMobileActions] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const inputContainerRef = useRef<HTMLDivElement>(null);
+
+  // Handle mobile keyboard visibility
+  useEffect(() => {
+    const handleResize = () => {
+      if (inputContainerRef.current && window.visualViewport) {
+        const viewportHeight = window.visualViewport.height;
+        const windowHeight = window.innerHeight;
+        
+        // If keyboard is open (viewport height is less than window height)
+        if (viewportHeight < windowHeight * 0.75) {
+          inputContainerRef.current.style.position = 'fixed';
+          inputContainerRef.current.style.bottom = '0';
+          inputContainerRef.current.style.left = '0';
+          inputContainerRef.current.style.right = '0';
+          inputContainerRef.current.style.zIndex = '50';
+        } else {
+          inputContainerRef.current.style.position = 'relative';
+          inputContainerRef.current.style.zIndex = '40';
+        }
+      }
+    };
+
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize);
+      window.visualViewport.addEventListener('scroll', handleResize);
+    }
+
+    return () => {
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize);
+        window.visualViewport.removeEventListener('scroll', handleResize);
+      }
+    };
+  }, []);
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +117,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 pb-4">
+    <div ref={inputContainerRef} className="w-full max-w-3xl mx-auto px-4 pb-4 bg-[var(--color-bg)]">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -92,6 +128,68 @@ export function ChatInput({
             <Square className="w-3 h-3 fill-current" />
             <span>Stop</span>
           </button>
+        </div>
+      )}
+
+      {/* Mobile Actions Menu */}
+      {showMobileActions && (
+        <div className="lg:hidden mb-3 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg animate-slide-up">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-sm font-semibold text-[var(--color-text-primary)]">Actions</span>
+            <button
+              onClick={() => setShowMobileActions(false)}
+              className="p-1 rounded-lg hover:bg-[var(--color-bg-secondary)] transition-colors"
+            >
+              <X className="w-4 h-4 text-[var(--color-text-secondary)]" />
+            </button>
+          </div>
+          <div className="space-y-2">
+            <button
+              onClick={() => {
+                onGenerateQuiz();
+                setShowMobileActions(false);
+              }}
+              disabled={!canGenerateQuiz || isQuizLoading || isLoading}
+              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                !canGenerateQuiz
+                  ? 'opacity-30 cursor-not-allowed bg-[var(--color-bg-secondary)]'
+                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+              }`}
+            >
+              {isQuizLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <ClipboardCheck className="w-5 h-5" />
+              )}
+              <div className="flex-1 text-left">
+                <div className="text-sm font-semibold text-[var(--color-text-primary)]">Generate Quiz</div>
+                <div className="text-xs text-[var(--color-text-secondary)]">Test your knowledge</div>
+              </div>
+            </button>
+
+            <button
+              onClick={() => {
+                onGenerateFlowchart();
+                setShowMobileActions(false);
+              }}
+              disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
+              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+                !canGenerateFlowchart
+                  ? 'opacity-30 cursor-not-allowed bg-[var(--color-bg-secondary)]'
+                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+              }`}
+            >
+              {isFlowchartLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <GitBranch className="w-5 h-5" />
+              )}
+              <div className="flex-1 text-left">
+                <div className="text-sm font-semibold text-[var(--color-text-primary)]">Generate Flowchart</div>
+                <div className="text-xs text-[var(--color-text-secondary)]">Visualize concepts</div>
+              </div>
+            </button>
+          </div>
         </div>
       )}
 
@@ -156,6 +254,16 @@ export function ChatInput({
             {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
           </button>
         </div>
+
+        {/* Mobile Actions Button */}
+        <button
+          type="button"
+          onClick={() => setShowMobileActions(!showMobileActions)}
+          className="lg:hidden p-2 rounded-lg transition-colors bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex-shrink-0"
+          title="More actions"
+        >
+          <MoreHorizontal className="w-4 h-4" />
+        </button>
 
         {/* Send button - Mobile visible, always on right */}
         <button
