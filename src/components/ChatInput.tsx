@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
-import type { AIModel } from '../types';
+import { Square, ClipboardCheck, GitBranch, Loader2, Paperclip, ArrowUp, MoreHorizontal, X } from 'lucide-react';
 
 interface ChatInputProps {
   onSendMessage: (message: string) => void;
@@ -134,7 +133,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-0 sm:pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-2 sm:pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -234,7 +233,7 @@ export function ChatInput({
         />
 
         {/* Text area */}
-        <div className="flex-1 min-w-0 py-1">
+        <div className="flex-1 min-w-0">
           <textarea
             ref={textareaRef}
             value={input}
@@ -242,7 +241,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Tutor..."
             disabled={disabled || isLoading}
-            className="w-full max-h-[100px] bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed"
+            className="w-full max-h-[100px] py-2 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed font-medium"
             rows={1}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           />
