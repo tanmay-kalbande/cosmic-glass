@@ -52,7 +52,7 @@ const CodeBlock = React.memo(({ language, children }: { language: string; childr
         <button
           onClick={handleCopy}
           className="interactive-button p-1.5 bg-gray-800/80 rounded hover:bg-gray-700 text-gray-300 transition-colors touch-target"
-          title={'Copy code'}
+          title="Copy code"
         >
           {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
         </button>
@@ -90,7 +90,7 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
       <button
         onClick={onRegenerate}
         className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-        title={'Regenerate response'}
+        title="Regenerate response"
       >
         <RefreshCcw className="w-4 h-4" />
       </button>
@@ -98,7 +98,7 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
     <button
       onClick={onCopy}
       className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-      title={'Copy message'}
+      title="Copy message"
     >
       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
     </button>
@@ -106,7 +106,7 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
       <button
         onClick={onSaveNote}
         className={`p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] transition-colors ${noteSaved ? 'text-blue-400' : 'hover:text-[var(--color-text-primary)]'}`}
-        title={'Save as Note'}
+        title="Save as Note"
       >
         <Bookmark className="w-4 h-4" />
       </button>
@@ -114,7 +114,7 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
     <button
       onClick={onEdit}
       className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-      title={'Edit message'}
+      title="Edit message"
     >
       <Edit2 className="w-4 h-4" />
     </button>
@@ -174,7 +174,10 @@ export function MessageBubble({
     URL.revokeObjectURL(url);
   }, [message.content, message.id]);
 
-  const handleEdit = useCallback(() => {
+  const handleEdit = useCallback((e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
     setIsEditing(true);
     setEditContent(message.content);
   }, [message.content]);
@@ -267,15 +270,32 @@ export function MessageBubble({
 
           <div className="flex-1 min-w-0">
             {isEditing ? (
-              <textarea
-                ref={textareaRef}
-                value={editContent}
-                onChange={(e) => setEditContent(e.target.value)}
-                onKeyDown={handleKeyDown}
-                onBlur={handleSaveEdit}
-                className="w-full min-w-[200px] min-h-[60px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
-                placeholder={'Edit your message...'}
-              />
+              <div className="space-y-2">
+                <textarea
+                  ref={textareaRef}
+                  value={editContent}
+                  onChange={(e) => setEditContent(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  className="w-full min-w-[200px] min-h-[60px] p-2 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
+                  placeholder="Edit your message..."
+                />
+                <div className="flex gap-2 justify-end">
+                  <button
+                    onClick={handleCancelEdit}
+                    className="p-1.5 rounded-md hover:bg-[#1a1a1a] text-gray-400 hover:text-white transition-colors"
+                    title="Cancel"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={handleSaveEdit}
+                    className="p-1.5 rounded-md hover:bg-[#1a1a1a] text-green-400 hover:text-green-300 transition-colors"
+                    title="Save (Ctrl+Enter)"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             ) : (
               <div 
                 onClick={handleEdit}
@@ -291,6 +311,16 @@ export function MessageBubble({
               </div>
             )}
           </div>
+
+          {!isEditing && (
+            <button
+              onClick={handleEdit}
+              className="opacity-0 group-hover:opacity-100 p-1.5 text-gray-400 hover:text-white transition-all rounded-md hover:bg-[#1a1a1a] flex-shrink-0"
+              title="Edit"
+            >
+              <Edit2 className="w-4 h-4" />
+            </button>
+          )}
         </div>
       ) : (
         <div className="w-full max-w-none pl-0">
