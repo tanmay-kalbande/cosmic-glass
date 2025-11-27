@@ -201,6 +201,28 @@
     }
   }
 
+  @keyframes slideUpFadeIn {
+    from {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideDownFadeOut {
+    from {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateY(20px);
+      opacity: 0;
+    }
+  }
+
   @keyframes pulse {
     50% {
       opacity: 0.5;
@@ -327,7 +349,6 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: var(--color-bg);
   }
 
   .chat-messages {
@@ -345,7 +366,7 @@
   @media (max-width: 768px) {
     .chat-messages {
       padding: 0.5rem;
-      padding-bottom: 120px; /* Extra space for keyboard and input */
+      padding-bottom: 180px; /* Extra space for keyboard and input */
     }
   }
 
@@ -378,7 +399,6 @@
     padding: 1rem;
     flex-shrink: 0;
     padding-bottom: max(1rem, env(safe-area-inset-bottom));
-    background: var(--color-bg);
     position: relative;
   }
 
@@ -386,14 +406,12 @@
     .chat-input-container {
       padding: 0.75rem;
       padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-      background: rgba(5, 5, 5, 0.95);
-      backdrop-filter: blur(10px);
     }
     
     /* Support for iOS Safari */
     @supports (-webkit-touch-callout: none) {
       .chat-messages {
-        padding-bottom: 150px; /* Extra space for keyboard */
+        padding-bottom: 200px; /* Extra space for keyboard */
       }
       
       .chat-input-container {
