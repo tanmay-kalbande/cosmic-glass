@@ -13,8 +13,8 @@ export function InstallPrompt({ onInstall, onDismiss }: InstallPromptProps) {
         {/* Logo */}
         <div className="flex-shrink-0 w-12 h-12 bg-[var(--color-sidebar)] rounded-lg flex items-center justify-center p-2">
           <img
-            src="/white-logo.png"
-            alt="AI Tutor Logo"
+            src="/coze.svg"
+            alt="Mono Logo"
             className="w-full h-full object-contain"
           />
         </div>
@@ -22,7 +22,7 @@ export function InstallPrompt({ onInstall, onDismiss }: InstallPromptProps) {
         {/* Text content */}
         <div className="flex-1 min-w-0">
           <h3 className="font-semibold text-[var(--color-text-primary)] text-base">
-            Install AI Tutor App
+            Install Mono
           </h3>
           <p className="text-sm text-[var(--color-text-secondary)] mt-1">
             Get the best full-screen experience.
