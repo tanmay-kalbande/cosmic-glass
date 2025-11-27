@@ -1,4 +1,16 @@
-export type TutorMode = 'standard' | 'mentor' | 'cosmic' | 'ayanokoji';
+export type TutorMode = 
+  | 'standard' 
+  | 'mentor' 
+  | 'cosmic' 
+  | 'ayanokoji'
+  | 'innovator'      
+  | 'strategist'     
+  | 'devil'          
+  | 'brainstorm'     
+  | 'coach'          
+  | 'scientist'      
+  | 'storyteller'    
+  | 'drill';         
 
 // Expanded Model IDs
 export type AIModel =
@@ -52,8 +64,8 @@ export interface APISettings {
   googleApiKey: string;
   zhipuApiKey: string;
   mistralApiKey: string;
-  groqApiKey: string; // New
-  cerebrasApiKey: string; // New
+  groqApiKey: string; 
+  cerebrasApiKey: string; 
   selectedModel: AIModel;
   selectedTutorMode: TutorMode;
 }
