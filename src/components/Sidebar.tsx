@@ -76,28 +76,28 @@ export function Sidebar({
     }
   }, [activeView]);
 
-  // Full list of models
-  const allModels = [
-    // --- The "Big 4" (Default View) ---
-    { id: 'gemini-2.5-flash', icon: Sparkles, name: 'Gemini 2.5 Flash' },
-    { id: 'mistral-small-latest', icon: Cloud, name: 'Mistral Small' },
-    { id: 'llama-3.3-70b-versatile', icon: Zap, name: 'Llama 3.3' },
+  // --- MODEL LISTS ---
+  const topModels = [
     { id: 'gpt-oss-120b', icon: Cpu, name: 'Cerebras 120B' },
-
-    // --- The "More" list (Hidden by default) ---
-    { id: 'gemini-2.5-pro', icon: Sparkles, name: 'Gemini 2.5 Pro' },
-    { id: 'gemma-3-27b-it', icon: Sparkles, name: 'Gemma 3 27B' },
+    { id: 'openai/gpt-oss-20b', icon: Zap, name: 'GPT 20B' },
     { id: 'mistral-large-latest', icon: Cloud, name: 'Mistral Large' },
     { id: 'mistral-medium-latest', icon: Cloud, name: 'Mistral Medium' },
-    { id: 'codestral-latest', icon: Terminal, name: 'Codestral' },
-    { id: 'openai/gpt-oss-20b', icon: Zap, name: 'GPT 20B' },
-    { id: 'qwen-3-235b-a22b-instruct-2507', icon: Cpu, name: 'Qwen 3' },
+    { id: 'gemini-2.5-flash', icon: Sparkles, name: 'Gemini 2.5 Flash' },
+    { id: 'gemma-3-27b-it', icon: Sparkles, name: 'Gemma 3 27B' },
     { id: 'zai-glm-4.6', icon: Cpu, name: 'GLM 4.6' },
     { id: 'glm-4.5-flash', icon: Brain, name: 'GLM 4.5' },
   ];
 
-  // Logic to determine which models to render
-  const visibleModels = showAllModels ? allModels : allModels.slice(0, 4);
+  const otherModels = [
+    { id: 'mistral-small-latest', icon: Cloud, name: 'Mistral Small' },
+    { id: 'llama-3.3-70b-versatile', icon: Zap, name: 'Llama 3.3' },
+    { id: 'gemini-2.5-pro', icon: Sparkles, name: 'Gemini 2.5 Pro' },
+    { id: 'codestral-latest', icon: Terminal, name: 'Codestral' },
+    { id: 'qwen-3-235b-a22b-instruct-2507', icon: Cpu, name: 'Qwen 3' },
+  ];
+  
+  // Combined list for fallback logic (e.g., folded sidebar icon)
+  const allModels = [...topModels, ...otherModels];
 
   const sortedConversations = useMemo(() => {
     return [...conversations].sort((a, b) => {
@@ -216,7 +216,7 @@ export function Sidebar({
         </button>
       </div>
 
-      {/* Model Selector - Updated to 4 + More */}
+      {/* Model Selector */}
       {view === 'chats' && (
         <div className="p-2 border-b border-[var(--color-border)]">
           {isFolded ? (
@@ -234,9 +234,9 @@ export function Sidebar({
                 AI Model
               </p>
 
-              {/* Grid for Primary Models */}
+              {/* Grid for Top Models */}
               <div className="grid grid-cols-2 gap-2">
-                {visibleModels.map(model => (
+                {topModels.map(model => (
                   <button
                     key={model.id}
                     onClick={() => onModelChange(model.id as AIModel)}
@@ -263,10 +263,30 @@ export function Sidebar({
                   </>
                 ) : (
                   <>
-                    <ChevronDown className="w-3 h-3" /> Show more models ({allModels.length - 4})
+                    <ChevronDown className="w-3 h-3" /> Show {otherModels.length} more models
                   </>
                 )}
               </button>
+
+              {/* Grid for Other Models (Conditional) */}
+              {showAllModels && (
+                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[var(--color-border)]">
+                 {otherModels.map(model => (
+                   <button
+                     key={model.id}
+                     onClick={() => onModelChange(model.id as AIModel)}
+                     className={`flex flex-col items-center gap-1 p-2 rounded-lg transition-all duration-200 border transform hover:scale-105 active:scale-100 ${settings.selectedModel === model.id
+                       ? 'bg-[var(--color-card)] border-[var(--color-border)] text-white scale-105'
+                       : 'bg-transparent border-transparent hover:bg-[var(--color-card)] text-[var(--color-text-secondary)] hover:text-white'
+                       }`}
+                     title={model.name}
+                   >
+                     <model.icon className="w-4 h-4" />
+                     <span className="text-xs font-semibold truncate w-full text-center">{model.name.split(' ').slice(0, 2).join(' ')}</span>
+                   </button>
+                 ))}
+               </div>
+              )}
             </div>
           )}
         </div>
