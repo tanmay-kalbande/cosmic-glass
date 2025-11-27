@@ -1,10 +1,14 @@
-const CACHE_NAME = 'coze-v1';
+const CACHE_NAME = 'mono-v1';
 const urlsToCache = [
   '/',
   '/index.html',
   '/coze.svg',
   '/manifest.json',
-  // Add other static assets as needed
+  '/gemini-color.svg',
+  '/mistral-color.svg',
+  '/openai.svg',
+  '/zhipu-color.svg',
+  '/meta-color.svg'
 ];
 
 // Install event - cache resources
@@ -78,34 +82,4 @@ self.addEventListener('fetch', event => {
         }
       })
   );
-});
-
-// Handle background sync for offline message queuing (optional)
-self.addEventListener('sync', event => {
-  if (event.tag === 'background-sync') {
-    event.waitUntil(
-      // Handle any background sync tasks here
-      Promise.resolve()
-    );
-  }
-});
-
-// Handle push notifications (optional)
-self.addEventListener('push', event => {
-  if (event.data) {
-    const options = {
-      body: event.data.text(),
-      icon: '/coze.svg',
-      badge: '/coze.svg',
-      vibrate: [100, 50, 100],
-      data: {
-        dateOfArrival: Date.now(),
-        primaryKey: 1
-      }
-    };
-    
-    event.waitUntil(
-      self.registration.showNotification('Coze', options)
-    );
-  }
 });
