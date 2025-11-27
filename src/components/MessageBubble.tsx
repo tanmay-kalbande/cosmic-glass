@@ -75,18 +75,15 @@ const StreamingIndicator = React.memo(() => (
   </span>
 ));
 
-const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSaveNote, onExport, copied, noteSaved }: {
-  isUser: boolean;
+const ActionButtons = React.memo(({ onRegenerate, onCopy, onSaveNote, copied, noteSaved }: {
   onRegenerate?: () => void;
-  onEdit: () => void;
   onCopy: () => void;
   onSaveNote: () => void;
-  onExport: () => void;
   copied: boolean;
   noteSaved: boolean;
 }) => (
   <div className="flex items-center gap-1 mt-2 text-[var(--color-text-secondary)]">
-    {!isUser && onRegenerate && (
+    {onRegenerate && (
       <button
         onClick={onRegenerate}
         className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
@@ -102,21 +99,12 @@ const ActionButtons = React.memo(({ isUser, onRegenerate, onEdit, onCopy, onSave
     >
       {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
     </button>
-    {!isUser && (
-      <button
-        onClick={onSaveNote}
-        className={`p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] transition-colors ${noteSaved ? 'text-blue-400' : 'hover:text-[var(--color-text-primary)]'}`}
-        title="Save as Note"
-      >
-        <Bookmark className="w-4 h-4" />
-      </button>
-    )}
     <button
-      onClick={onEdit}
-      className="p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] hover:text-[var(--color-text-primary)] transition-colors"
-      title="Edit message"
+      onClick={onSaveNote}
+      className={`p-1.5 rounded-md hover:bg-[var(--color-bg-secondary)] transition-colors ${noteSaved ? 'text-blue-400' : 'hover:text-[var(--color-text-primary)]'}`}
+      title="Save as Note"
     >
-      <Edit2 className="w-4 h-4" />
+      <Bookmark className="w-4 h-4" />
     </button>
   </div>
 ));
@@ -161,18 +149,6 @@ export function MessageBubble({
       setTimeout(() => setNoteSaved(false), 2500);
     }
   }, [message.content, onSaveAsNote]);
-
-  const handleExport = useCallback(() => {
-    const blob = new Blob([message.content], { type: 'text/markdown;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `ai-tutor-response-${message.id}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [message.content, message.id]);
 
   const handleEdit = useCallback((e?: React.MouseEvent) => {
     if (e) {
@@ -263,14 +239,14 @@ export function MessageBubble({
   return (
     <div className={`message-wrapper group w-full mb-6 ${isUser ? 'flex justify-start' : ''}`}>
       {isUser ? (
-        <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 max-w-[85%] shadow-sm">
+        <div className="flex items-start gap-3 bg-[#2a2a2a] text-white rounded-2xl px-4 py-3 w-full sm:max-w-[85%] shadow-sm">
           {/* Emoji - aligned with first line */}
           <div className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center bg-[#E6E4DD] text-[#333333] select-none" style={{ marginTop: '2px' }}>
             <Smile size={18} strokeWidth={2.5} />
           </div>
 
           {/* Content area */}
-          <div className="flex-1 min-w-0 max-w-full">
+          <div className="flex-1 min-w-0">
             {isEditing ? (
               <div className="w-full">
                 <textarea
@@ -278,7 +254,8 @@ export function MessageBubble({
                   value={editContent}
                   onChange={(e) => setEditContent(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  className="w-full min-h-[60px] p-3 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-base font-semibold leading-relaxed focus:outline-none focus:border-blue-500"
+                  className="w-full min-h-[60px] p-3 bg-[#1a1a1a] border border-white/10 rounded-lg resize-none text-white text-[15px] font-medium leading-relaxed focus:outline-none focus:border-blue-500"
+                  style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
                   placeholder="Edit your message..."
                 />
                 <div className="flex gap-2 justify-end mt-2">
@@ -299,7 +276,10 @@ export function MessageBubble({
                 </div>
               </div>
             ) : (
-              <div className="prose prose-invert max-w-none text-base leading-relaxed font-semibold break-words">
+              <div 
+                className="prose prose-invert max-w-none text-[15px] leading-relaxed font-medium break-words"
+                style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
+              >
                 <ReactMarkdown
                   remarkPlugins={[remarkGfm, remarkMath]}
                   rehypePlugins={[rehypeKatex]}
@@ -330,7 +310,10 @@ export function MessageBubble({
             </div>
           )}
 
-          <div className="prose prose-invert max-w-none text-[16px] leading-relaxed text-[var(--color-text-primary)]">
+          <div 
+            className="prose prose-invert max-w-none text-[15px] leading-relaxed text-[var(--color-text-primary)]"
+            style={{ fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif' }}
+          >
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex]}
@@ -344,12 +327,9 @@ export function MessageBubble({
           {!isStreaming && message.content.length > 0 && (
             <div className="mt-2 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity duration-200">
               <ActionButtons
-                isUser={isUser}
                 onRegenerate={onRegenerateResponse ? handleRegenerate : undefined}
-                onEdit={handleEdit}
                 onCopy={handleCopy}
                 onSaveNote={handleSaveNote}
-                onExport={handleExport}
                 copied={copied}
                 noteSaved={noteSaved}
               />
