@@ -1,3 +1,5 @@
+// src/App.tsx
+
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { ChatArea } from './components/ChatArea';
@@ -346,7 +348,7 @@ function App() {
 
     const history = conversation.messages.slice(0, messageIndex);
     if (history.length === 0 || history[history.length - 1].role !== 'user') {
-      console.error(\"Cannot regenerate without a preceding user message.\");
+      console.error("Cannot regenerate without a preceding user message.");
       showNotification('Cannot regenerate this message', 'error');
       return;
     }
@@ -546,7 +548,7 @@ function App() {
 
       const a = document.createElement('a');
       a.href = url;
-      const fileName = `${flowchart.title.replace(/\\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
+      const fileName = `${flowchart.title.replace(/\s+/g, '-').toLowerCase()}-${new Date().toISOString().split('T')[0]}.json`;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
@@ -653,7 +655,7 @@ function App() {
   );
 
   return (
-    <div className=\"app-container\">
+    <div className="app-container">
       <ShootingStars />
       {/* Notification */}
       {notification.show && (
@@ -665,7 +667,7 @@ function App() {
       )}
 
       {sidebarOpen && window.innerWidth < 1024 && (
-        <div className=\"sidebar-backdrop\" onClick={() => setSidebarOpen(false)} />
+        <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />
       )}
       <Sidebar
         conversations={sortedConversations}
@@ -692,15 +694,15 @@ function App() {
         onToggleFold={() => setSidebarFolded(!sidebarFolded)}
         isSidebarOpen={sidebarOpen}
       />
-      <div className=\"main-content\">
+      <div className="main-content">
         {!sidebarOpen && activeView !== 'chat' && (
           <button
             onClick={() => setSidebarOpen(true)}
-            className=\"fixed top-3 left-3 z-40 p-2 glass-panel rounded-full shadow-lg hover:bg-white/10 transition-all duration-300 lg:hidden btn-shine group\"
-            title=\"Open sidebar\"
-            aria-label=\"Open sidebar\"
+            className="fixed top-3 left-3 z-40 p-2 glass-panel rounded-full shadow-lg hover:bg-white/10 transition-all duration-300 lg:hidden btn-shine group"
+            title="Open sidebar"
+            aria-label="Open sidebar"
           >
-            <Menu className=\"w-5 h-5 text-white/80 group-hover:text-white transition-colors\" />
+            <Menu className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" />
           </button>
         )}
         {activeView === 'chat' ? (
