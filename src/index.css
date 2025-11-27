@@ -366,7 +366,7 @@
   @media (max-width: 768px) {
     .chat-messages {
       padding: 0.5rem;
-      padding-bottom: 180px; /* Extra space for keyboard and input */
+      padding-bottom: 2rem; /* Reduced space from 180px to 2rem */
     }
   }
 
@@ -404,18 +404,18 @@
 
   @media (max-width: 768px) {
     .chat-input-container {
-      padding: 0.75rem;
-      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+      padding: 0.5rem; /* Reduced container padding */
+      padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
     }
     
     /* Support for iOS Safari */
     @supports (-webkit-touch-callout: none) {
       .chat-messages {
-        padding-bottom: 200px; /* Extra space for keyboard */
+        padding-bottom: 2rem; /* Reduced extra space */
       }
       
       .chat-input-container {
-        padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 20px));
+        padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 20px));
       }
     }
   }
