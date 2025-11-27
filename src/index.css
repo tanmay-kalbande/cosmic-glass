@@ -366,7 +366,7 @@
   @media (max-width: 768px) {
     .chat-messages {
       padding: 0.5rem;
-      padding-bottom: 2rem; /* Reduced space from 180px to 2rem */
+      padding-bottom: 1rem; /* Reduced space from 2rem to 1rem */
     }
   }
 
@@ -404,14 +404,14 @@
 
   @media (max-width: 768px) {
     .chat-input-container {
-      padding: 0.5rem; /* Reduced container padding */
+      padding: 0.5rem;
       padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
     }
     
     /* Support for iOS Safari */
     @supports (-webkit-touch-callout: none) {
       .chat-messages {
-        padding-bottom: 2rem; /* Reduced extra space */
+        padding-bottom: 2rem;
       }
       
       .chat-input-container {
