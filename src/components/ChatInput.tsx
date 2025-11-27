@@ -134,7 +134,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-4 pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-0 sm:pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
