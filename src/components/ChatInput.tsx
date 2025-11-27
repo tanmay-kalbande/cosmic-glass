@@ -133,7 +133,7 @@ export function ChatInput({
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-2 sm:pb-4">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-2 sm:px-4 pb-1 sm:pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -211,13 +211,13 @@ export function ChatInput({
       {/* Input form */}
       <form
         onSubmit={handleSubmit}
-        className="relative flex items-end gap-2 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
+        className="relative flex items-end gap-1 p-2 bg-[var(--color-card)] border border-[var(--color-border)] rounded-3xl shadow-lg focus-within:ring-1 focus-within:ring-[var(--color-border)] transition-all"
       >
         {/* Left attachment button */}
         <button
           type="button"
           onClick={handlePlusClick}
-          className="p-2 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors flex-shrink-0"
+          className="p-3 text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] hover:bg-[var(--color-bg-secondary)] rounded-full transition-colors flex-shrink-0"
           title="Attach file"
         >
           <Paperclip className="w-4 h-4" />
@@ -232,7 +232,7 @@ export function ChatInput({
           className="hidden"
         />
 
-        {/* Text area */}
+        {/* Text area - Adjusted vertical alignment */}
         <div className="flex-1 min-w-0">
           <textarea
             ref={textareaRef}
@@ -241,7 +241,7 @@ export function ChatInput({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Tutor..."
             disabled={disabled || isLoading}
-            className="w-full max-h-[100px] py-2 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-relaxed font-medium"
+            className="w-full max-h-[120px] py-2.5 bg-transparent border-none outline-none text-[var(--color-text-primary)] placeholder-[var(--color-text-placeholder)] resize-none text-sm leading-5 font-medium"
             rows={1}
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           />
@@ -253,7 +253,7 @@ export function ChatInput({
             type="button"
             onClick={onGenerateQuiz}
             disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-            className={`p-1.5 rounded-lg transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            className={`p-2.5 rounded-full transition-colors ${!canGenerateQuiz ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
             title="Generate Quiz"
           >
             {isQuizLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ClipboardCheck className="w-4 h-4" />}
@@ -263,7 +263,7 @@ export function ChatInput({
             type="button"
             onClick={onGenerateFlowchart}
             disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-            className={`p-1.5 rounded-lg transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
+            className={`p-2.5 rounded-full transition-colors ${!canGenerateFlowchart ? 'opacity-30 cursor-not-allowed' : 'hover:bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]'}`}
             title="Generate Flowchart"
           >
             {isFlowchartLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <GitBranch className="w-4 h-4" />}
@@ -274,7 +274,7 @@ export function ChatInput({
         <button
           type="button"
           onClick={() => setShowMobileActions(!showMobileActions)}
-          className="lg:hidden p-2 rounded-lg transition-colors bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex-shrink-0"
+          className="lg:hidden p-3 rounded-full transition-colors bg-[var(--color-bg-secondary)] text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)] flex-shrink-0"
           title="More actions"
         >
           <MoreHorizontal className="w-4 h-4" />
@@ -284,7 +284,7 @@ export function ChatInput({
         <button
           type="submit"
           disabled={!canSend || isLoading}
-          className={`p-2 rounded-lg transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
+          className={`p-3 rounded-full transition-all duration-200 flex-shrink-0 ${!canSend || isLoading
             ? 'bg-[var(--color-bg-secondary)] text-[var(--color-text-placeholder)] cursor-not-allowed'
             : 'bg-[#D4704F] hover:bg-[#E08050] text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5'
             }`}
