@@ -31,39 +31,46 @@ export function ChatInput({
   const [showMobileActions, setShowMobileActions] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const inputContainerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle mobile keyboard visibility
+  // Handle mobile keyboard visibility - Keep input above keyboard
   useEffect(() => {
-    const handleResize = () => {
-      if (inputContainerRef.current && window.visualViewport) {
-        const viewportHeight = window.visualViewport.height;
-        const windowHeight = window.innerHeight;
-        
-        // If keyboard is open (viewport height is less than window height)
-        if (viewportHeight < windowHeight * 0.75) {
-          inputContainerRef.current.style.position = 'fixed';
-          inputContainerRef.current.style.bottom = '0';
-          inputContainerRef.current.style.left = '0';
-          inputContainerRef.current.style.right = '0';
-          inputContainerRef.current.style.zIndex = '50';
-        } else {
-          inputContainerRef.current.style.position = 'relative';
-          inputContainerRef.current.style.zIndex = '40';
-        }
+    let isKeyboardOpen = false;
+
+    const handleFocus = () => {
+      if (window.innerWidth <= 768 && containerRef.current) {
+        isKeyboardOpen = true;
+        // Force input to scroll into view
+        setTimeout(() => {
+          containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        }, 300);
       }
     };
 
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', handleResize);
-      window.visualViewport.addEventListener('scroll', handleResize);
+    const handleBlur = () => {
+      isKeyboardOpen = false;
+    };
+
+    const handleResize = () => {
+      if (isKeyboardOpen && containerRef.current && window.innerWidth <= 768) {
+        containerRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    };
+
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.addEventListener('focus', handleFocus);
+      textarea.addEventListener('blur', handleBlur);
     }
 
+    window.addEventListener('resize', handleResize);
+
     return () => {
-      if (window.visualViewport) {
-        window.visualViewport.removeEventListener('resize', handleResize);
-        window.visualViewport.removeEventListener('scroll', handleResize);
+      if (textarea) {
+        textarea.removeEventListener('focus', handleFocus);
+        textarea.removeEventListener('blur', handleBlur);
       }
+      window.removeEventListener('resize', handleResize);
     };
   }, []);
 
@@ -114,10 +121,20 @@ export function ChatInput({
     fileInputRef.current?.click();
   };
 
+  const handleQuizClick = () => {
+    onGenerateQuiz();
+    setShowMobileActions(false);
+  };
+
+  const handleFlowchartClick = () => {
+    onGenerateFlowchart();
+    setShowMobileActions(false);
+  };
+
   const canSend = input.trim() && !disabled;
 
   return (
-    <div ref={inputContainerRef} className="w-full max-w-3xl mx-auto px-4 pb-4 bg-[var(--color-bg)]">
+    <div ref={containerRef} className="w-full max-w-3xl mx-auto px-4 pb-4">
       {/* Stop generating button */}
       {isLoading && (
         <div className="flex justify-center mb-3">
@@ -131,9 +148,14 @@ export function ChatInput({
         </div>
       )}
 
-      {/* Mobile Actions Menu */}
+      {/* Mobile Actions Menu with closing animation */}
       {showMobileActions && (
-        <div className="lg:hidden mb-3 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg animate-slide-up">
+        <div 
+          className="lg:hidden mb-3 p-3 bg-[var(--color-card)] border border-[var(--color-border)] rounded-2xl shadow-lg"
+          style={{
+            animation: 'slideUpFadeIn 0.3s ease-out forwards'
+          }}
+        >
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm font-semibold text-[var(--color-text-primary)]">Actions</span>
             <button
@@ -145,15 +167,12 @@ export function ChatInput({
           </div>
           <div className="space-y-2">
             <button
-              onClick={() => {
-                onGenerateQuiz();
-                setShowMobileActions(false);
-              }}
+              onClick={handleQuizClick}
               disabled={!canGenerateQuiz || isQuizLoading || isLoading}
-              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
                 !canGenerateQuiz
                   ? 'opacity-30 cursor-not-allowed bg-[var(--color-bg-secondary)]'
-                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)] active:scale-95'
               }`}
             >
               {isQuizLoading ? (
@@ -168,15 +187,12 @@ export function ChatInput({
             </button>
 
             <button
-              onClick={() => {
-                onGenerateFlowchart();
-                setShowMobileActions(false);
-              }}
+              onClick={handleFlowchartClick}
               disabled={!canGenerateFlowchart || isFlowchartLoading || isLoading}
-              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors ${
+              className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
                 !canGenerateFlowchart
                   ? 'opacity-30 cursor-not-allowed bg-[var(--color-bg-secondary)]'
-                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)]'
+                  : 'bg-[var(--color-bg-secondary)] hover:bg-[var(--color-border)] active:scale-95'
               }`}
             >
               {isFlowchartLoading ? (
@@ -265,7 +281,7 @@ export function ChatInput({
           <MoreHorizontal className="w-4 h-4" />
         </button>
 
-        {/* Send button - Mobile visible, always on right */}
+        {/* Send button */}
         <button
           type="submit"
           disabled={!canSend || isLoading}
