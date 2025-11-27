@@ -19,10 +19,25 @@ const apiInfo = {
 };
 
 const tutorModes = [
+  // ORIGINAL MODES
   { id: 'standard', name: 'Standard Tutor', description: 'Neutral, explains clearly, step-by-step.', emoji: '📘' },
   { id: 'mentor', name: 'Friendly Mentor', description: 'Casual, motivating, makes analogies.', emoji: '🧑‍🏫' },
   { id: 'cosmic', name: 'Cosmic Nerd', description: 'Space obsessed, sci-fi analogies.', emoji: '🌌' },
   { id: 'ayanokoji', name: 'Ayanokoji', description: 'Cold, calculating, efficient.', emoji: '😐' },
+  
+  // NEW MODES - CREATIVITY & INNOVATION
+  { id: 'innovator', name: 'The Innovator', description: '10x thinking, challenges assumptions, first principles.', emoji: '🚀' },
+  { id: 'brainstorm', name: 'Brainstorm Buddy', description: 'Wild ideas, no judgment, rapid ideation.', emoji: '💡' },
+  { id: 'storyteller', name: 'The Storyteller', description: 'Teaches through narratives and metaphors.', emoji: '📖' },
+  
+  // NEW MODES - ANALYTICAL & STRATEGIC
+  { id: 'strategist', name: 'The Strategist', description: 'Probabilistic thinking, decision trees, risk analysis.', emoji: '🎲' },
+  { id: 'scientist', name: 'The Scientist', description: 'Hypothesis-driven, experimental mindset, data-focused.', emoji: '🔬' },
+  { id: 'devil', name: 'Devil\'s Advocate', description: 'Challenges ideas, finds weaknesses, stress-tests.', emoji: '😈' },
+  
+  // NEW MODES - PERSONAL GROWTH
+  { id: 'coach', name: 'The Coach', description: 'Self-reflection, empathy, personal growth.', emoji: '🧘' },
+  { id: 'drill', name: 'Drill Sergeant', description: 'Tough love, no excuses, results-focused.', emoji: '💪' },
 ];
 
 type ActiveTab = 'general' | 'keys' | 'data';
